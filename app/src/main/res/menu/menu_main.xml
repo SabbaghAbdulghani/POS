@@ -1,0 +1,48 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.abdulghanis.draftpos.MainActivity">
+    <item android:id="@+id/tbSave"
+        android:title="@string/save"
+        android:icon="@drawable/save"
+        android:iconTintMode="src_in"
+        android:iconTint="@color/colorOrang"
+        app:showAsAction="always"
+        android:orderInCategory="10"
+        />
+
+    <item android:id="@+id/tbCancel"
+    android:title="@string/cancel"
+    android:icon="@drawable/delred1"
+    android:iconTintMode="multiply"
+    app:showAsAction="always"
+        android:orderInCategory="9"  />
+
+    <item android:id="@+id/tbProfit"
+        android:title="@string/profit"
+        app:showAsAction="collapseActionView"
+        android:orderInCategory="1"  />
+    <item android:id="@+id/tbPayments"
+        android:title="@string/payments"
+        app:showAsAction="collapseActionView"
+        android:orderInCategory="1"  />
+
+    <item android:id="@+id/tbProducts"
+        android:title="@string/productsList"
+        app:showAsAction="collapseActionView"
+        android:orderInCategory="1"  />
+    <item android:id="@+id/tbAccounts"
+        android:title="@string/accountList"
+        app:showAsAction="collapseActionView"
+        android:orderInCategory="1"  />
+    <item android:id="@+id/tbAccountBalance"
+        android:title="@string/accountList"
+        app:showAsAction="collapseActionView"
+        android:orderInCategory="1"  />
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+</menu>

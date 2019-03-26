@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">DraftPOS</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="productsList">Products list</string>
+    <string name="accountList">Account list</string>
+    <string name="profit">Profit</string>
+    <string name="payments">Payments</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="customer">Customer</string>
+    <string name="supplier">Supplier</string>
+    <string name="product">Product</string>
+    <string name="notes">Notes</string>
+    <string name="barcode">Barcode</string>
+    <string name="scnBarcode">Scan</string>
+    <string name="total">Total</string>
+    <string name="discount">Discount</string>
+    <string name="paid">Paid</string>
+    <string name="unpaid">Unpaid</string>
+</resources>
