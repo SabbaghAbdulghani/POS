@@ -7,7 +7,7 @@ public class account_info {
     public String account_parent ;
     public String parent_name;
     public String getlongName() {
-        return account_code + " - " + account_name;
+        return account_code + "-" + account_name;
     }
     public byte account_type ;
     public byte net_type ;

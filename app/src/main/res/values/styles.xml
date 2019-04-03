@@ -18,28 +18,29 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
+    <style name="AppTheme.FormColor">
+        <item name="android:background">@color/colorBg</item>
 
-    <style name="AppTheme.FormColor" >
-    <item name="android:background">@color/colorBg</item>
-
-    <item name="android:layout_margin" >3dp</item>
+        <item name="android:layout_margin">3dp</item>
 
 
     </style>
 
 
-    <style name="AppTheme.myText" parent="android:TextAppearance.DeviceDefault.DialogWindowTitle" >
+    <style name="AppTheme.myText" parent="android:TextAppearance.DeviceDefault.DialogWindowTitle">
         <item name="android:textColor">@color/colorText</item>
-        <item name="android:layout_margin" >2dp</item>
+        <item name="android:layout_margin">2dp</item>
 
     </style>
-    <style name="AppTheme.myEdit" >
+
+    <style name="AppTheme.myEdit">
         <item name="android:background">@color/colorBgEdit</item>
-         <item name="android:textColor">@color/colorWText</item>
+        <item name="android:textColor">@color/colorWText</item>
 
 
     </style>
-    <style name="AppTheme.myButton" >
+
+    <style name="AppTheme.myButton">
         <item name="android:background">@color/colorBg</item>
         <item name="android:capitalize">characters</item>
         <item name="android:typeface">monospace</item>
@@ -47,11 +48,12 @@
         <item name="android:shadowDy">1.2</item>
         <item name="android:shadowRadius">2</item>
         <item name="android:textColor">@color/colorWText</item>
-        <item name="android:gravity" >center</item>
-        <item name="android:layout_margin" >3dp</item>
-        <item name="android:shadowColor" >#70ff106d</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:shadowColor">#70ff106d</item>
     </style>
-    <style name="AppTheme.myMainButton" >
+
+    <style name="AppTheme.myMainButton">
         <item name="android:background">@color/colorOrang</item>
         <item name="android:capitalize">characters</item>
         <item name="android:typeface">monospace</item>
@@ -59,8 +61,8 @@
         <item name="android:shadowDy">1.2</item>
         <item name="android:shadowRadius">2</item>
         <item name="android:textColor">@color/colorWText</item>
-        <item name="android:gravity" >center</item>
-        <item name="android:layout_margin" >3dp</item>
-        <item name="android:shadowColor" >#70ff106d</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:shadowColor">#70ff106d</item>
     </style>
 </resources>

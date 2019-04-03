@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.abdulghanis.draftpos.OrderSaveActivity">
+    <item android:id="@+id/tbpSave"
+        android:title="@string/save"
+        android:icon="@drawable/save"
+        android:iconTintMode="src_in"
+        android:iconTint="@color/colorOrang"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="10"
+        />
+    <item android:id="@+id/tbpBack"
+        android:title="@string/cancel"
+        android:icon="@drawable/back1"
+        android:iconTintMode="src_in"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="9"
+        />
+
+</menu>

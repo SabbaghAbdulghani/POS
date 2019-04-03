@@ -30,7 +30,7 @@ public class order {
     public double getTotalItems() {
         int i;
         double sum = 0;
-        for(i = 1; i < Items.size(); i++)
+        for(i = 0; i < Items.size(); i++)
             sum += Items.get(i).getTotalPrice();
         return sum;
     }

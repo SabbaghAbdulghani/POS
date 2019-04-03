@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5sp"
+    android:padding="5sp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="5sp">
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="5sp">
+                <TabHost
+                    android:id="@+id/tabProduct"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TabWidget
+                            android:id="@android:id/tabs"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <FrameLayout
+                            android:id="@android:id/tabcontent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:id="@+id/tabDetail"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+
+                                <TableLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent">
+
+                                        <TextView
+                                            android:id="@+id/tvProvider"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/supplier"
+                                            android:textSize="16sp"
+                                            android:textStyle="bold" />
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/actSupplier"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:completionThreshold="2"
+                                            android:maxLines="1"
+                                            android:singleLine="true"/>
+
+
+                                    </TableRow>
+
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent">
+
+                                        <TextView
+                                            android:id="@+id/tvQuntity"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/quntity" />
+
+                                        <EditText
+                                            android:id="@+id/etQuntity"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:ems="10"
+                                            android:inputType="numberDecimal"
+                                            android:maxLines="1"
+                                            android:singleLine="true"/>
+
+                                        <TextView
+                                            android:id="@+id/tvUnit"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/unit" />
+                                    </TableRow>
+
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent">
+
+                                        <TextView
+                                            android:id="@+id/tvPartialQuntity"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/partial_quantity" />
+
+                                        <EditText
+                                            android:id="@+id/etPartialQuntity"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:maxLines="1"
+                                            android:singleLine="true"
+                                            android:inputType="numberDecimal" />
+
+                                        <TextView
+                                            android:id="@+id/tvSubUnit"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content" />
+                                    </TableRow>
+
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent">
+
+                                        <TextView
+                                            android:id="@+id/tvPprice"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/price" />
+
+                                        <EditText
+                                            android:id="@+id/etPrice"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:maxLines="1"
+                                            android:singleLine="true"
+                                            android:inputType="numberDecimal" />
+
+                                        <TextView
+                                            android:id="@+id/tvCurrency"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content" />
+                                    </TableRow>
+
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent">
+
+                                        <TextView
+                                            android:id="@+id/tvTotal"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/total"
+                                            android:textSize="16sp"
+                                            android:textStyle="bold" />
+
+                                        <EditText
+                                            android:id="@+id/etTotal"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:enabled="true"
+                                            android:maxLines="1"
+                                            android:singleLine="true"
+                                            android:inputType="numberDecimal"
+                                            android:textSize="16sp"
+                                            android:textStyle="bold" />
+
+                                        <TextView
+                                            android:id="@+id/tvTotalCurrency"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content" />
+
+
+                                    </TableRow>
+
+                                </TableLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvNotes"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/notes" />
+
+                                    <EditText
+                                        android:id="@+id/etNotes"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:inputType="textMultiLine" />
+
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/tabInfo"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:text="@string/barcode" />
+
+                                    <TextView
+                                        android:id="@+id/tvInfoBarcode"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:textColor="@color/colorPrimaryDark" />
+                                </LinearLayout>
+                                <!--
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:text="@string/unit" />
+
+                                    <TextView
+                                        android:id="@+id/tvInfoUnit"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:textColor="@color/colorPrimaryDark" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:text="@string/sub_unit" />
+
+                                    <TextView
+                                        android:id="@+id/tvInfoSubUnit"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:textColor="@color/colorPrimaryDark" />
+
+                                    <TextView
+                                        android:id="@+id/tvInfoSubUnitValue"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:textColor="@color/colorPrimaryDark" />
+                                </LinearLayout>
+        -->
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:text="@string/store_qn" />
+
+                                    <TextView
+                                        android:id="@+id/tvInfoStoreAvailable"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:textColor="@color/colorPrimaryDark" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:text="@string/cost" />
+
+                                    <TextView
+                                        android:id="@+id/tvInfoCost"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:textColor="@color/colorPrimaryDark" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:text="@string/sales_price" />
+
+                                    <TextView
+                                        android:id="@+id/tvInfoPrice"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="2sp"
+                                        android:textColor="@color/colorPrimaryDark" />
+
+                                </LinearLayout>
+                            </LinearLayout>
+
+
+                        </FrameLayout>
+
+                    </LinearLayout>
+                </TabHost>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/btCloseEditItem"
+
+                        android:layout_width="100sp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/ok" />
+                </RelativeLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

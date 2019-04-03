@@ -14,7 +14,7 @@ public class product {
     public double price2 ;
     public String quntity_name ;
     public String part_name ;
-    public int part_quntity ;
+    public double part_quntity ;
     public double costprice ;
     public byte[] logo ;
     public String color ;

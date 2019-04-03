@@ -6,11 +6,27 @@
     <string name="accountList">Account list</string>
     <string name="profit">Profit</string>
     <string name="payments">Payments</string>
+    <string name="quntity">Quntity</string>
+    <string name="unit">Unit</string>
+    <string name="sub_unit">Sub unit</string>
+    <string name="price">Price</string>
+    <string name="store_qn">Store available</string>
+    <string name="cost">Cost</string>
+    <string name="sales_price">Sales price</string>
+    <string name="details">Details</string>
+    <string name="product_info">Product information</string>
+    <string name="partial_quantity">Partial quantity</string>
+    <string name="ok">OK</string>
+    <string name="exit">Exit</string>
 
     <string name="action_settings">Settings</string>
     <string name="customer">Customer</string>
     <string name="supplier">Supplier</string>
+    <string name="account">Account</string>
+    <string name="debit_account">Debit account</string>
+    <string name="credit_account">Credit account</string>
     <string name="product">Product</string>
+    <string name="product_hit">Select product</string>
     <string name="notes">Notes</string>
     <string name="barcode">Barcode</string>
     <string name="scnBarcode">Scan</string>
@@ -18,4 +34,26 @@
     <string name="discount">Discount</string>
     <string name="paid">Paid</string>
     <string name="unpaid">Unpaid</string>
+    <string name="title_activity_order_save">Order Save</string>
+    <string name="alert_new_order">You will cancel the current order and create a new one, are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="store">Store code</string>
+    <string name="view_product_menu">View products menus</string>
+    <string name="AutoEditSalesItem">Auto edit sales items</string>
+    <string name="photo_albums">Photo albums</string>
+    <string name="service_url">Service URL</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="description">Description</string>
+    <string name="value">Value</string>
+    <string name="add">Add</string>
+
+
+    <!-- Strings related to login -->
+    <string name="prompt_user_name">User name</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="error_invalid_user_name">This user name or password is invalid</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="title_activity_transaction">TransactionActivity</string>
+
 </resources>
