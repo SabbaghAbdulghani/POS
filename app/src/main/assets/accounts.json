@@ -1,0 +1,36 @@
+﻿{"accounts":[{"account_id":"acc1","account_code":"01","account_name":"Khaled zein","account_parent":"","parent_name":"","account_type":"2","net_type":"0","balance":"0","logo":""},
+{"account_id":"acc2","account_code":"02","account_name":"Khaled khanji","account_parent":"","parent_name":"","account_type":"2","net_type":"0","balance":"0","logo":""},
+{
+"account_id":"acc3",
+"account_code":"03",
+"account_name":"Mhd Salem",
+"account_parent":"",
+"parent_name":"",
+"account_type":"2",
+"net_type":"0",
+"balance":"0",
+"logo":""
+},
+{
+"account_id":"acc4",
+"account_code":"04",
+"account_name":"Omar Alwan",
+"account_parent":"",
+"parent_name":"",
+"account_type":"2",
+"net_type":"0",
+"balance":"0",
+"logo":""
+},
+{
+"account_id":"acc5",
+"account_code":"05",
+"account_name":"Sameer soso",
+"account_parent":"",
+"parent_name":"",
+"account_type":"2",
+"net_type":"0",
+"balance":"0",
+"logo":""
+}
+]}
