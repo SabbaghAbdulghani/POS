@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="2sp"
+    android:background="@color/colorPrimary">
+
+
+    <TextView
+        android:id="@+id/txTransAccountName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:foreground="@color/colorWText"/>
+
+    <TextView
+        android:id="@+id/txTransDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:foreground="@color/colorWText" />
+
+    <TextView
+        android:id="@+id/txTransValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:text="0"
+        android:foreground="@color/colorWText"/>
+</LinearLayout>

@@ -145,10 +145,17 @@ public class MainActivity extends AppCompatActivity {
 
         } else if (id == R.id.tbProfit) {
             Intent ProfitIntent=new Intent(getApplicationContext(), TransactionActivity.class);
+            Bundle profitBundle=new Bundle();
+            profitBundle.putString("transaction_type", "in");
+            ProfitIntent.putExtras(profitBundle);
             startActivity(ProfitIntent);
 
         } else if (id == R.id.tbPayments) {
-
+            Intent ProfitIntent=new Intent(getApplicationContext(), TransactionActivity.class);
+            Bundle profitBundle=new Bundle();
+            profitBundle.putString("transaction_type", "out");
+            ProfitIntent.putExtras(profitBundle);
+            startActivity(ProfitIntent);
         } else if (id == R.id.action_exit) {
             this.finish();
             System.exit(0);
@@ -158,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void BindOrder() {
-
         final ListView lv = (ListView) findViewById(R.id.lvOrderItems);
         adpOrder=new listOrderAdapter(general.ActiveOrder.Items);
         lv.setAdapter(adpOrder);
@@ -340,6 +346,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
 
     // list view adapter
     class listOrderAdapter extends BaseAdapter {
