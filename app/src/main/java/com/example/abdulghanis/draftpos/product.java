@@ -8,7 +8,7 @@ public class product {
     public String product_barcode ;
     public String parent_id ;
     public String product_parent ;
-    public String provider_accountid ;
+    public String provider_account_id ;
     public byte product_type ;
     public double price1 ;
     public double price2 ;
@@ -21,5 +21,4 @@ public class product {
     public double price_in ;
     public double price_out ;
     public double Quntity ;
-
 }

@@ -25,13 +25,15 @@ import java.util.ArrayList;
 
 public class TransactionActivity extends AppCompatActivity {
 
-    private ArrayList<transaction_detail> Items=new ArrayList<>();
+    private transaction_header transaction=new transaction_header();
+    String transaction_type="in";
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         Button btAdd=(Button) findViewById(R.id.btAdd);
@@ -46,17 +48,12 @@ public class TransactionActivity extends AppCompatActivity {
 
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null) {
-            String transaction_type = extras.getString("transaction_type","in");
-            if(transaction_type.equals("in")){
-                toolbar.setTitle(getString(R.string.title_activity_transaction));
 
-            }else{
-                toolbar.setTitle(getString(R.string.payment_transaction));
-                TextView tvAcc=(TextView)findViewById(R.id.tvAcc);
-                tvAcc.setText(getString(R.string.debit_account));
-            }
+        transaction.transaction_number=0;
+        if(extras != null) {
+            transaction_type = extras.getString("transaction_type","in");
         }
+        newTransaction();
 
     }
 
@@ -109,6 +106,29 @@ public class TransactionActivity extends AppCompatActivity {
 
     }
 
+    private  void newTransaction(){
+
+        transaction=new transaction_header();
+        if(transaction_type.equals("in")){
+            toolbar.setTitle(getString(R.string.title_activity_transaction));
+            transaction.build_from=2;
+        }else{
+            toolbar.setTitle(getString(R.string.payment_transaction));
+            TextView tvAcc=(TextView)findViewById(R.id.tvAcc);
+            tvAcc.setText(getString(R.string.debit_account));
+            transaction.build_from=3;
+        }
+        transaction.transaction_number=0;
+        transaction.transaction_sub_number=0;
+        transaction.branch_code=general.StoreCode;
+        transaction.create_user= general.ActiveUser.userName;
+        transaction.location_create="";
+        account_info acc=general.getAccountById(general.ActiveUser.cashBox_id);
+        if(acc!=null){
+            transaction.oldBalance=acc.balance;
+        }
+        transaction.transaction_id="";
+    }
 
     private void addAccountValue(){
         AutoCompleteTextView txCustomer=(AutoCompleteTextView)findViewById(R.id.txCustomer);
@@ -134,14 +154,14 @@ public class TransactionActivity extends AppCompatActivity {
         item.account_name=acc.account_name;
         item.explantion=txDescription.getText().toString();
         item.price_in=value;
-        Items.add(item);
+        transaction.items.add(item);
 
         BindTransaction();
     }
 
     public void BindTransaction() {
         final ListView lv = (ListView) findViewById(R.id.lvTransItems);
-        listTransactionAdapter adpOrder=new listTransactionAdapter(Items);
+        listTransactionAdapter adpOrder=new listTransactionAdapter(transaction.items);
         lv.setAdapter(adpOrder);
         EditText txTotal = (EditText) findViewById(R.id.txTotal);
 
@@ -152,13 +172,15 @@ public class TransactionActivity extends AppCompatActivity {
             }
         });
         double total=0;
-        for(int ind=0; ind< Items.size(); ind++){
-            total+=Items.get(ind).price_in;
+        for(int ind=0; ind< transaction.items.size(); ind++){
+            total+=transaction.items.get(ind).price_in;
         }
         txTotal.setText(String.valueOf(total));
 
 
     }
+
+
 
 
     class listTransactionAdapter extends BaseAdapter {

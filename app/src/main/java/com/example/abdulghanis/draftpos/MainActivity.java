@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -37,17 +38,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    public orderItem selectOrderItem ;
+    public orderItem selectOrderItem;
     public listOrderAdapter adpOrder;
+    AutoCompleteTextView actProduct;
+    String[] arrProducts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        general.AppMainActivity=this;
+        general.AppMainActivity = this;
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -68,13 +76,11 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        actProduct = (AutoCompleteTextView) findViewById(R.id.actProduct);
 
-        //login
-        //Intent loginIntent=new Intent(getApplicationContext(), LoginActivity.class);
-        //startActivityForResult(loginIntent, 1);
-        // eng login
         InitActivity();
     }
+
     /*
     @Override
     protected void onDestroy(){
@@ -94,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -110,11 +117,11 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent settingIntent=new Intent(getApplicationContext(), SettingsActivity.class);
+            Intent settingIntent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(settingIntent);
             //return true;
         } else if (id == R.id.tbPayAcc) {
-            Intent orderPayIntent=new Intent(this,OrderSaveActivity.class);
+            Intent orderPayIntent = new Intent(this, OrderSaveActivity.class);
             //Bundle orderPayBundle=new Bundle();
             //orderPayBundle.putString("order", "");
             //orderPayIntent.putExtras(orderPayBundle);
@@ -128,8 +135,7 @@ public class MainActivity extends AppCompatActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle(getString(R.string.app_name))
                     .setMessage(getString(R.string.alert_new_order))
-                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener()
-                    {
+                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             NewOrder();
@@ -144,15 +150,15 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.tbProducts) {
 
         } else if (id == R.id.tbProfit) {
-            Intent ProfitIntent=new Intent(getApplicationContext(), TransactionActivity.class);
-            Bundle profitBundle=new Bundle();
+            Intent ProfitIntent = new Intent(getApplicationContext(), TransactionActivity.class);
+            Bundle profitBundle = new Bundle();
             profitBundle.putString("transaction_type", "in");
             ProfitIntent.putExtras(profitBundle);
             startActivity(ProfitIntent);
 
         } else if (id == R.id.tbPayments) {
-            Intent ProfitIntent=new Intent(getApplicationContext(), TransactionActivity.class);
-            Bundle profitBundle=new Bundle();
+            Intent ProfitIntent = new Intent(getApplicationContext(), TransactionActivity.class);
+            Bundle profitBundle = new Bundle();
             profitBundle.putString("transaction_type", "out");
             ProfitIntent.putExtras(profitBundle);
             startActivity(ProfitIntent);
@@ -166,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void BindOrder() {
         final ListView lv = (ListView) findViewById(R.id.lvOrderItems);
-        adpOrder=new listOrderAdapter(general.ActiveOrder.Items);
+        adpOrder = new listOrderAdapter(general.ActiveOrder.Items);
         lv.setAdapter(adpOrder);
         EditText txTotal = (EditText) findViewById(R.id.txTotal);
 
@@ -174,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //edit order item
-                selectOrderItem=general.ActiveOrder.Items.get(position);
+                selectOrderItem = general.ActiveOrder.Items.get(position);
                 editOrderProduct(selectOrderItem);
             }
         });
@@ -223,15 +229,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     // Grid view adapter
-    private void InitActivity()
-    {
-        SharedPreferences preferences=getSharedPreferences("POS_PREF",0);
+    private void InitActivity() {
 
-        general.ViewProductMenus=preferences.getBoolean("ViewProductMenus", false);
-        general.AutoEditSalesItem=preferences.getBoolean("AutoEditSalesItem", false);
-        general.PhotoAlbum=preferences.getBoolean("PhotoAlbum", false);
-        general.StoreCode=preferences.getString("StoreCode", "");
-        general.ServiceURL=preferences.getString("ServiceURL", "");
+        //SharedPreferences preferences = getSharedPreferences("POS_PREF", 0);
+        //general.ViewProductMenus = preferences.getBoolean("ViewProductMenus", false);
+        //general.AutoEditSalesItem = preferences.getBoolean("AutoEditSalesItem", false);
+        //general.PhotoAlbum = preferences.getBoolean("PhotoAlbum", false);
+        //general.StoreCode = preferences.getString("StoreCode", "ST1");
+        //general.ServiceURL = preferences.getString("ServiceURL", "http://10.0.2.2:8011/");
 
 
         EditText txProduct = (EditText) findViewById(R.id.txProduct);
@@ -257,25 +262,29 @@ public class MainActivity extends AppCompatActivity {
             lyProductMenus.setVisibility(View.GONE);
         }
 
-        AutoCompleteTextView actProduct=(AutoCompleteTextView)findViewById(R.id.actProduct);
-        /*
+
+
         actProduct.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-
+                if(hasFocus){
+                    arrProducts = general.getProductsArray();
+                    ArrayAdapter<String> adpPro = new ArrayAdapter<String>(general.AppMainActivity, android.R.layout.simple_list_item_1, arrProducts);
+                    actProduct.setAdapter(adpPro);
+                }
             }
         });
-        */
-        if(general.ActiveOrder==null || general.Products.size()==0){
+
+        if (general.ActiveOrder == null || general.Products.size() == 0) {
             NewOrder();
         }
-        if(actProduct.getAdapter()==null){
+        if (actProduct.getAdapter() == null) {
             InitProductsCategory();
             BindOrder();
         }
 
-
     }
+
     private void InitProductsMenu(String parentId) {
         GridView gv = (GridView) findViewById(R.id.gvProducts);
         final ArrayList<product> products = general.getProducts(parentId);
@@ -326,11 +335,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        final AutoCompleteTextView actProduct = (AutoCompleteTextView) findViewById(R.id.actProduct);
-        final String[] arrProducts = general.getProductsArray();
+        //final AutoCompleteTextView actProduct = (AutoCompleteTextView) findViewById(R.id.actProduct);
+        arrProducts = general.getProductsArray();
         ArrayAdapter<String> adpPro = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrProducts);
-        //ArrayAdapter<String> adpPro = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrProducts);
-
+        //////ArrayAdapter<String> adpPro = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrProducts);
         actProduct.setAdapter(adpPro);
 
         actProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -388,13 +396,13 @@ public class MainActivity extends AppCompatActivity {
             TextView tvItemId = (TextView) myView.findViewById(R.id.tvItemId);
 
             orderItem item = _items.get(position);
-            product _product=general.getProductById(item.product_id);
+            product _product = general.getProductById(item.product_id);
             tvItemTitle.setText(item.product_name);
             tvItemValue.setText(String.valueOf(item.getTotalPrice()));
             //tvItemPrice.setText(item.getPriceString());
             tvItemQn.setText(String.valueOf(item.Quntity) + " " + item.Unit);
-            if(item.PartUnit != null && !item.PartUnit.equals("")){
-                tvItemPartialQn.setText(" - " + String.valueOf(item.Quntity* _product.part_quntity)+ item.PartUnit +" - ");
+            if (item.PartUnit != null && !item.PartUnit.equals("")) {
+                tvItemPartialQn.setText(" - " + String.valueOf(item.Quntity * _product.part_quntity) + item.PartUnit + " - ");
             }
             tvItemPrice.setText(getString(R.string.price) + " : " + String.valueOf(item.price));
             tvItemCurr.setText(general.CurrencyName);
@@ -523,36 +531,39 @@ public class MainActivity extends AppCompatActivity {
 
         general.ActiveOrder.Items.add(item);
         BindOrder();
-        if(general.AutoEditSalesItem){
+        if (general.AutoEditSalesItem) {
             editOrderProduct(item);
         }
 
     }
 
-    private void editOrderProduct(orderItem item)
-    {
-        selectOrderItem=item;
-        if(selectOrderItem!=null)
-        {
-            editOrderItem pop=new editOrderItem() ;
+    private void editOrderProduct(orderItem item) {
+        selectOrderItem = item;
+        if (selectOrderItem != null) {
+            editOrderItem pop = new editOrderItem();
             pop.show(this.getFragmentManager(), "editOrderItem");
         }
         adpOrder.notifyDataSetChanged();
         EditText txTotal = (EditText) findViewById(R.id.txTotal);
         txTotal.setText(String.valueOf(general.ActiveOrder.getTotalItems()));
     }
-    public boolean SaveOrder(){
+
+    public boolean SaveOrder() {
 
 
-        return  true;
+        return true;
     }
-    private void NewOrder(){
-        general.refreshProducts(loadFile("products.json"));
-        general.refreshAccounts(loadFile("accounts.json"));
-        general.ActiveOrder = new order();
-        InitProductsCategory();
-        BindOrder();
 
+    private void NewOrder() {
+        //general.refreshProducts(loadFile("products.json"));
+        general.refreshProducts();
+        general.refreshAccounts();
+        InitProductsCategory();
+
+        new general.ApiGetRequest().execute(general.ServiceURL + general.getNewStatmentAPI
+                + "?userid=" + general.ActiveUser.userId + "&storeCode=" + general.StoreCode, "NewStatment");
+        //general.ActiveOrder = general.NewOrder();
+        //BindOrder();
     }
 
     // out of busnse

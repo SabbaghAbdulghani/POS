@@ -65,7 +65,6 @@
             </android.support.design.widget.TextInputLayout>
 
 
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

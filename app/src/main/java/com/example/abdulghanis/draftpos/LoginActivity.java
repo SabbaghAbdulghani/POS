@@ -70,47 +70,51 @@ public class LoginActivity extends AppCompatActivity  {//implements LoaderCallba
                 return false;
             }
         });
-        preferences=getSharedPreferences("POS_PREF",0);
+
+        preferences = getSharedPreferences("POS_PREF", 0);
+        general.ViewProductMenus = preferences.getBoolean("ViewProductMenus", false);
+        general.AutoEditSalesItem = preferences.getBoolean("AutoEditSalesItem", false);
+        general.PhotoAlbum = preferences.getBoolean("PhotoAlbum", false);
+        general.StoreCode = preferences.getString("StoreCode", "ST1");
+        general.ServiceURL = preferences.getString("ServiceURL", "http://10.0.2.2:8011/");
+
         mUserName.setText(preferences.getString("userName", ""));
     }
-
-    /*
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
+    protected void onPause() {
+        super.onPause();
 
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-
+    protected void onStope() {
+        super.onPause();
+        if(general.ActiveUser==null || general.ActiveUser.userId.equals((""))){
+            System.exit(0);
+        }
     }
-*/
 
     private  void attemptLogin(){
         String userName=mUserName.getText().toString();
         String password=mPasswordView.getText().toString();
-        if(userName.equals("user") && password.equals("123")){
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra("result",true);
-            setResult(Activity.RESULT_OK,returnIntent);
 
+        new general.ApiGetRequest().execute(general.ServiceURL + general.getLoginAPI
+                + "?username=" + userName +"&password=" + password, "authentication");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        if(general.ActiveUser !=null && !general.ActiveUser.userId.equals((""))){
             SharedPreferences.Editor editor=preferences.edit();
             editor.putString("userName", userName);
             editor.apply();
 
+            //Intent returnIntent = new Intent();
+            //returnIntent.putExtra("result",true);
+            //setResult(Activity.RESULT_OK,returnIntent);
+            Intent loginIntent=new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(loginIntent);
             finish();
         }
     }
