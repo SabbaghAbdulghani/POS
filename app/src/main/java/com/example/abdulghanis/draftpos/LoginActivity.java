@@ -4,9 +4,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.icu.util.TimeUnit;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +34,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,16 +57,18 @@ public class LoginActivity extends AppCompatActivity  {//implements LoaderCallba
     // UI references.
     private EditText mUserName;
     private EditText mPasswordView;
+    private Button btLogin;
+    private SharedPreferences preferences;
+    private ProgressBar progressbar;
 
-    SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        mUserName = (EditText) findViewById(R.id.UseName);
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mUserName = findViewById(R.id.UseName);
+        mPasswordView = findViewById(R.id.password);
+        /*mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
@@ -69,14 +77,22 @@ public class LoginActivity extends AppCompatActivity  {//implements LoaderCallba
                 }
                 return false;
             }
-        });
+        });*/
 
+        btLogin=(Button)findViewById(R.id.btLogin);
+        btLogin.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attemptLogin();
+            }
+        });
         preferences = getSharedPreferences("POS_PREF", 0);
         general.ViewProductMenus = preferences.getBoolean("ViewProductMenus", false);
         general.AutoEditSalesItem = preferences.getBoolean("AutoEditSalesItem", false);
         general.PhotoAlbum = preferences.getBoolean("PhotoAlbum", false);
         general.StoreCode = preferences.getString("StoreCode", "ST1");
-        general.ServiceURL = preferences.getString("ServiceURL", "http://10.0.2.2:8011/");
+        general.ServiceURL = preferences.getString("ServiceURL", "http://192.168.1.4:8011/");
+        //general.ServiceURL = preferences.getString("ServiceURL", "http://10.0.2.2:8011/");
 
         mUserName.setText(preferences.getString("userName", ""));
     }
@@ -96,27 +112,55 @@ public class LoginActivity extends AppCompatActivity  {//implements LoaderCallba
     private  void attemptLogin(){
         String userName=mUserName.getText().toString();
         String password=mPasswordView.getText().toString();
+        if(userName.equals("")){
+            Toast.makeText(this,getString(R.string.missing_value),Toast.LENGTH_LONG).show();
+            return;
+        }
 
+        general.AppMainActivity=this;
+        btLogin.setEnabled(false);
         new general.ApiGetRequest().execute(general.ServiceURL + general.getLoginAPI
                 + "?username=" + userName +"&password=" + password, "authentication");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        if(general.ActiveUser !=null && !general.ActiveUser.userId.equals((""))){
-            SharedPreferences.Editor editor=preferences.edit();
-            editor.putString("userName", userName);
-            editor.apply();
+    }
 
-            //Intent returnIntent = new Intent();
-            //returnIntent.putExtra("result",true);
-            //setResult(Activity.RESULT_OK,returnIntent);
-            Intent loginIntent=new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(loginIntent);
-            finish();
-        }
+    public void NotAuthentican(){
+        AlertDialog.Builder alert=new AlertDialog.Builder(this).setTitle(getString(R.string.app_name))
+                .setMessage(getString(R.string.error_invalid_user_name))
+                .setIcon(R.drawable.delred1)
+                .setCancelable(false).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        alert.create().show();
+        btLogin.setEnabled(true);
+    }
+    public void startMainIntent(){
+        String userName=mUserName.getText().toString();
+        SharedPreferences.Editor editor=preferences.edit();
+        editor.putString("userName", userName);
+        editor.apply();
+
+        Intent mainIntent=new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(mainIntent);
+        finish();
+    }
+    public void setServiceUrl(String ErrorMsg){
+        AlertDialog.Builder alert=new AlertDialog.Builder(this).setTitle(getString(R.string.app_name))
+                .setMessage(ErrorMsg + System.getProperty("line.separator") +getString(R.string.error_url))
+                .setIcon(R.drawable.delred1)
+                .setCancelable(false).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent settingActivity=new Intent(getApplicationContext(), SettingsActivity.class);
+                        startActivity(settingActivity);
+
+                    }
+                });
+        alert.create().show();
+        btLogin.setEnabled(true);
     }
 }
 

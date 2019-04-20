@@ -1,6 +1,7 @@
 package com.example.abdulghanis.draftpos;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -21,12 +22,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 
 public final class general {
     public static Activity AppMainActivity;
-    public static ArrayList<product> Products = new ArrayList<product>();
-    public static ArrayList<account_info> Accounts = new ArrayList<account_info>();
+    public static ArrayList<product> Products = new ArrayList<>();
+    private static ArrayList<account_info> Accounts = new ArrayList<>();
     public static String CurrencyName = "SYP";
     public static sys_user ActiveUser = new sys_user();
     public static order ActiveOrder;
@@ -51,7 +56,7 @@ public final class general {
     }
 
     public static ArrayList<product> getProductCategories() {
-        ArrayList<product> lst = new ArrayList<product>();
+        ArrayList<product> lst = new ArrayList<>();
         product pro;
         for (int i = 0; i < Products.size(); i++) {
             pro = Products.get(i);
@@ -63,7 +68,7 @@ public final class general {
     }
 
     public static ArrayList<product> getProducts(String parentId) {
-        ArrayList<product> lst = new ArrayList<product>();
+        ArrayList<product> lst = new ArrayList<>();
         product pro;
         for (int i = 0; i < Products.size(); i++) {
             pro = Products.get(i);
@@ -87,7 +92,7 @@ public final class general {
 
     public static product getProductByName(String productName) {
         product pro;
-        String str = "";
+        String str;
         for (int i = 0; i < Products.size(); i++) {
             pro = Products.get(i);
             str = pro.product_code + "-" + pro.product_name;
@@ -100,7 +105,7 @@ public final class general {
 
     public static ArrayList<product> getProductSearch(String pName) {
         product pro;
-        ArrayList<product> lst = new ArrayList<product>();
+        ArrayList<product> lst = new ArrayList<>();
         for (int i = 0; i < Products.size(); i++) {
             pro = Products.get(i);
             if (pro.product_type != 0 && (pro.product_code.contains(pName) || pro.product_name.contains(pName))) {
@@ -143,7 +148,7 @@ public final class general {
 
     public static account_info getAccountByName(String accountName) {
         account_info acc;
-        String str = "";
+        String str;
         for (int i = 0; i < Accounts.size(); i++) {
             acc = Accounts.get(i);
             str = acc.account_code + "-" + acc.account_name;
@@ -156,7 +161,7 @@ public final class general {
 
     public static ArrayList<account_info> getAccountSearch(String pName) {
         account_info acc;
-        ArrayList<account_info> lst = new ArrayList<account_info>();
+        ArrayList<account_info> lst = new ArrayList<>();
         for (int i = 0; i < Accounts.size(); i++) {
             acc = Accounts.get(i);
             if (acc.account_code.contains(pName) || acc.account_name.contains(pName)) {
@@ -181,6 +186,134 @@ public final class general {
         new ApiGetRequest().execute(ServiceURL + getAccountListAPI, "accounts");
     }
 
+
+
+    public static class ApiGetRequest extends AsyncTask<String, Void, String> {
+        private static final int READ_TIMEOUT = 15000;
+        private static final int CONNECTION_TIMEOUT = 15000;
+        private String response;
+        private String ErrorMsg;
+        private String extras;
+
+        @Override
+        protected String doInBackground(String... params) {
+            String stringUrl = params[0];
+            extras = params[1];
+            String data = "";
+            if (params.length > 2) {
+                try {
+                    data = params[2];
+                    data = URLEncoder.encode(data, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+            response = "";
+            ErrorMsg = "";
+            String inputLine;
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+                //Create a URL object holding our url
+                URL myUrl = new URL(stringUrl);
+                //Create a connection
+                connection = (HttpURLConnection) myUrl.openConnection();
+                if (data.equals("")) {
+                    connection.setRequestMethod("GET");
+                } else {
+                    connection.setRequestMethod("POST");
+                    connection.setDoOutput(true);
+
+                    OutputStream outputPost = new BufferedOutputStream(connection.getOutputStream());
+                    connection.setFixedLengthStreamingMode(data.getBytes().length);
+                    connection.setChunkedStreamingMode(0);
+
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputPost, "UTF-8"));
+                    writer.write(data);
+                    writer.flush();
+                }
+                //Set methods and timeouts
+                connection.setReadTimeout(READ_TIMEOUT);
+                connection.setConnectTimeout(CONNECTION_TIMEOUT);
+
+                connection.setDoInput(true);
+                //connection.setDoOutput(true);
+                //Connect to our url
+                connection.connect();
+                //Create a new InputStreamReader
+                InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
+                //Create a new buffered reader and String Builder
+                reader = new BufferedReader(streamReader);
+                StringBuilder stringBuilder = new StringBuilder();
+                //Check if the line we are reading is not null
+                while ((inputLine = reader.readLine()) != null) {
+                    stringBuilder.append(inputLine);
+                }
+                //Close our InputStream and Buffered reader
+                reader.close();
+                streamReader.close();
+                //Set our result equal to our stringBuilder
+                response = stringBuilder.toString();
+                return response;
+            } catch (IOException e) {
+                e.printStackTrace();
+                response = "";
+                ErrorMsg = e.getMessage();
+                return null;
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+
+                    }
+                }
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            Gson gosn = new Gson();
+            try{
+                if (result == null || result.equals("")) {
+                    if (extras.equals("authentication")){
+                        if(ErrorMsg.contains("failed")) {
+                            ((LoginActivity) AppMainActivity).setServiceUrl(ErrorMsg);
+                        }else{
+                            ((LoginActivity) AppMainActivity).NotAuthentican();
+                        }
+                    }
+                    //  Toast.makeText(general.AppMainActivity,"error connect API", Toast.LENGTH_LONG);
+                } else if (extras.equals("accounts")) {
+                    TypeToken<List<account_info>> token = new TypeToken<List<account_info>>() { };
+                    Accounts = (ArrayList<account_info>) gosn.fromJson(result, token.getType());
+                    //general.ParseJsonAccounts(result);
+                } else if (extras.equals("products")) {
+                    TypeToken<List<product>> token = new TypeToken<List<product>>() {};
+                    Products = (ArrayList<product>) gosn.fromJson(result, token.getType());
+                    //general.ParseJsonProducts(result);
+                } else if (extras.equals("NewStatment")) {
+                    ActiveOrder=gosn.fromJson(result,order.class);
+                    //ParseOrder(result);
+                    ((MainActivity) AppMainActivity).BindOrder();
+                } else if (extras.equals("authentication")) {
+                    ActiveUser=gosn.fromJson(result,sys_user.class);
+                    ((LoginActivity) AppMainActivity).startMainIntent();
+                   //ParseUser(result);
+                }
+
+            }catch (Exception ex){
+
+            }
+
+        }
+    }
+
+    /*
     public static void ParseJsonProducts(String jsonStr) {
         ArrayList<product> lst = new ArrayList<product>();
         try {
@@ -210,7 +343,7 @@ public final class general {
                     pr.price_in = Double.valueOf(c.getString("price_in"));
                     pr.price_out = Double.valueOf(c.getString("price_out"));
                     pr.Quntity = Double.valueOf(c.getString("Quntity"));
-                    pr.provider_account_id  = c.getString("provider_account_id");
+                    pr.provider_account_id = c.getString("provider_account_id");
                     lst.add(pr);
 
                 } catch (Exception ex) {
@@ -321,112 +454,7 @@ public final class general {
 
         }
     }
+*/
 
-
-    public static class ApiGetRequest extends AsyncTask<String, Void, String> {
-        private static final int READ_TIMEOUT = 15000;
-        private static final int CONNECTION_TIMEOUT = 15000;
-        public String response;
-        public String ErrorMsg;
-        private String extras;
-
-        @Override
-        protected String doInBackground(String... params) {
-            String stringUrl = params[0];
-            extras = params[1];
-            String data="";
-            if(params.length>2){
-                try {
-                    data=params[2];
-                    data= URLEncoder.encode(data,"UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-            response = "";
-            ErrorMsg = "";
-            String inputLine;
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                //Create a URL object holding our url
-                URL myUrl = new URL(stringUrl);
-                //Create a connection
-                connection = (HttpURLConnection) myUrl.openConnection();
-                if(data.equals("")){
-                    connection.setRequestMethod("GET");
-                }else
-                {
-                    connection.setRequestMethod("POST");
-                    connection.setDoOutput(true);
-
-                    OutputStream outputPost = new BufferedOutputStream(connection.getOutputStream());
-                    connection.setFixedLengthStreamingMode(data.getBytes().length);
-                    connection.setChunkedStreamingMode(0);
-
-                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputPost, "UTF-8"));
-                    writer.write(data);
-                    writer.flush();
-                 }
-                //Set methods and timeouts
-                connection.setReadTimeout(READ_TIMEOUT);
-                connection.setConnectTimeout(CONNECTION_TIMEOUT);
-
-                connection.setDoInput(true);
-                //connection.setDoOutput(true);
-                //Connect to our url
-                connection.connect();
-                //Create a new InputStreamReader
-                InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
-                //Create a new buffered reader and String Builder
-                reader = new BufferedReader(streamReader);
-                StringBuilder stringBuilder = new StringBuilder();
-                //Check if the line we are reading is not null
-                while ((inputLine = reader.readLine()) != null) {
-                    stringBuilder.append(inputLine);
-                }
-                //Close our InputStream and Buffered reader
-                reader.close();
-                streamReader.close();
-                //Set our result equal to our stringBuilder
-                response = stringBuilder.toString();
-                return response;
-            } catch (IOException e) {
-                e.printStackTrace();
-                response = "";
-                ErrorMsg = e.getMessage();
-                return null;
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-
-                    }
-                }
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            if (result == null) {
-              //  Toast.makeText(general.AppMainActivity,"error connect API", Toast.LENGTH_LONG);
-            } else if (extras.equals("accounts")) {
-                general.ParseJsonAccounts(result);
-            } else if (extras.equals("products")) {
-                general.ParseJsonProducts(result);
-            } else if (extras.equals("NewStatment")) {
-                ParseOrder(result);
-                ((MainActivity) AppMainActivity).BindOrder();
-            } else if (extras.equals("authentication")) {
-                ParseUser(result);
-            }
-
-        }
-    }
 
 }

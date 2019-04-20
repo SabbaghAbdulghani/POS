@@ -43,6 +43,7 @@
     <string name="AutoEditSalesItem">Auto edit sales items</string>
     <string name="photo_albums">Photo albums</string>
     <string name="service_url">Service URL</string>
+    <string name="error_url">Please check service URL</string>
     <string name="title_activity_login">User Log in</string>
     <string name="description">Description</string>
     <string name="value">Value</string>

@@ -4,9 +4,11 @@ import android.content.SharedPreferences;
 import android.preference.EditTextPreference;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -90,6 +92,16 @@ public class SettingsActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor=preferences.edit();
                 editor.putString("ServiceURL", general.ServiceURL);
                 editor.apply();
+            }
+        });
+        etURL.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                general.ServiceURL=etURL.getText().toString();
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.putString("ServiceURL", general.ServiceURL);
+                editor.apply();
+                return false;
             }
         });
     }
