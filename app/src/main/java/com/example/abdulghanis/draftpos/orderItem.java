@@ -15,7 +15,7 @@ public class orderItem {
     public double CurrencyEqual;
     public double BasePrice;
     public double price;
-
+    public int ItemNO;
     public double getTotalPrice() {
         return Quntity * price;
     }
@@ -23,7 +23,7 @@ public class orderItem {
     public String getPriceString() {
         String str = String.valueOf(Quntity) + " " + Unit;
 
-        if (PartUnit != null && PartUnit != "") {
+        if (PartUnit != null && PartUnit.equals("")) {
             product _product=general.getProductById(product_id);
             str += " ( " +String.valueOf(Quntity* _product.part_quntity)+ PartUnit + "  ) ";
         }

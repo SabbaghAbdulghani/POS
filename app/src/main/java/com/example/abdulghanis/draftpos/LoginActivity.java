@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity  {//implements LoaderCallba
         general.AutoEditSalesItem = preferences.getBoolean("AutoEditSalesItem", false);
         general.PhotoAlbum = preferences.getBoolean("PhotoAlbum", false);
         general.StoreCode = preferences.getString("StoreCode", "ST1");
-        general.ServiceURL = preferences.getString("ServiceURL", "http://192.168.1.4:8011/");
+        general.ServiceURL = preferences.getString("ServiceURL", "http://10.0.2.2:8011/");
         //general.ServiceURL = preferences.getString("ServiceURL", "http://10.0.2.2:8011/");
 
         mUserName.setText(preferences.getString("userName", ""));

@@ -2,6 +2,7 @@ package com.example.abdulghanis.draftpos;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ClipDescription;
@@ -11,7 +12,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -37,6 +37,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -81,13 +83,15 @@ public class MainActivity extends AppCompatActivity {
         InitActivity();
     }
 
-    /*
+
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        System.exit(0);
+        general.AppMainActivity=null;
+        general.ActiveOrder=null;
+        //System.exit(0);
     }
-    */
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
@@ -172,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void BindOrder() {
         final ListView lv = (ListView) findViewById(R.id.lvOrderItems);
+        for(int i=0;i<general.ActiveOrder.Items.size();i++)
+            general.ActiveOrder.Items.get(i).ItemNO=i+1;
         adpOrder = new listOrderAdapter(general.ActiveOrder.Items);
         lv.setAdapter(adpOrder);
         EditText txTotal = (EditText) findViewById(R.id.txTotal);
@@ -239,11 +245,11 @@ public class MainActivity extends AppCompatActivity {
         //general.ServiceURL = preferences.getString("ServiceURL", "http://10.0.2.2:8011/");
 
 
-        EditText txProduct = (EditText) findViewById(R.id.txProduct);
+        EditText txProduct =  findViewById(R.id.txProduct);
         txProduct.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                EditText txProduct = (EditText) findViewById(R.id.txProduct);
+                EditText txProduct = findViewById(R.id.txProduct);
                 String str = txProduct.getText().toString();
                 if (str.length() > 1) {
                     ArrayList<product> lst = general.getProductSearch(str);
@@ -254,8 +260,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        LinearLayout lyProductMenus = (LinearLayout) findViewById(R.id.lyProductMenus);
-        LinearLayout loutSelectProduct = (LinearLayout) findViewById(R.id.loutSelectProduct);
+        LinearLayout lyProductMenus = findViewById(R.id.lyProductMenus);
+        LinearLayout loutSelectProduct =  findViewById(R.id.loutSelectProduct);
         if (general.ViewProductMenus) {
             loutSelectProduct.setVisibility(View.GONE);
         } else {
@@ -385,26 +391,28 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater linflater = getLayoutInflater();
-            View myView = linflater.inflate(R.layout.list_row_view, null);
-            TextView tvItemTitle = (TextView) myView.findViewById(R.id.tvItemTitle);
-            TextView tvItemValue = (TextView) myView.findViewById(R.id.tvItemValue);
-            TextView tvItemCurr = (TextView) myView.findViewById(R.id.tvItemCurr);
-            TextView tvItemPrice = (TextView) myView.findViewById(R.id.tvItemPrice);
-            TextView tvItemQn = (TextView) myView.findViewById(R.id.tvItemQn);
-            TextView tvItemPartialQn = (TextView) myView.findViewById(R.id.tvItemPartialQn);
-            TextView tvItemNotes = (TextView) myView.findViewById(R.id.tvItemNotes);
-            TextView tvItemId = (TextView) myView.findViewById(R.id.tvItemId);
+            View myView = linflater.inflate(R.layout.list_row_view, null);//xx
+            TextView tvNO = myView.findViewById(R.id.tvNO);
+            TextView tvItemTitle = myView.findViewById(R.id.tvItemTitle);
+            TextView tvItemValue = myView.findViewById(R.id.tvItemValue);
+            TextView tvItemCurr = myView.findViewById(R.id.tvItemCurr);
+            TextView tvItemPrice = myView.findViewById(R.id.tvItemPrice);
+            TextView tvItemQn = myView.findViewById(R.id.tvItemQn);
+            TextView tvItemPartialQn = myView.findViewById(R.id.tvItemPartialQn);
+            TextView tvItemNotes = myView.findViewById(R.id.tvItemNotes);
+            TextView tvItemId = myView.findViewById(R.id.tvItemId);
 
             orderItem item = _items.get(position);
             product _product = general.getProductById(item.product_id);
             tvItemTitle.setText(item.product_name);
             tvItemValue.setText(String.valueOf(item.getTotalPrice()));
+            tvNO.setText(String.valueOf(item.ItemNO));
             //tvItemPrice.setText(item.getPriceString());
-            tvItemQn.setText(String.valueOf(item.Quntity) + " " + item.Unit);
+            tvItemQn.setText((item.Quntity) + " " + item.Unit);
             if (item.PartUnit != null && !item.PartUnit.equals("")) {
-                tvItemPartialQn.setText(" - " + String.valueOf(item.Quntity * _product.part_quntity) + item.PartUnit + " - ");
+                tvItemPartialQn.setText(" - " + (item.Quntity * _product.part_quntity) + item.PartUnit + " - ");
             }
-            tvItemPrice.setText(getString(R.string.price) + " : " + String.valueOf(item.price));
+            tvItemPrice.setText(getString(R.string.price) + " : " + (item.price));
             tvItemCurr.setText(general.CurrencyName);
             tvItemNotes.setText(item.product_note);
             tvItemId.setText(item.product_id);
@@ -540,19 +548,54 @@ public class MainActivity extends AppCompatActivity {
     private void editOrderProduct(orderItem item) {
         selectOrderItem = item;
         if (selectOrderItem != null) {
-            editOrderItem pop = new editOrderItem();
-            pop.show(this.getFragmentManager(), "editOrderItem");
+            //editOrderItem pop = new editOrderItem();
+            //pop.show(this.getFragmentManager(), "edit_order_item");
+
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            Fragment prev = getFragmentManager().findFragmentByTag("edit_order_item");
+            if (prev != null) {
+                ft.remove(prev);
+            }
+            ft.addToBackStack(null);
+            editOrderItem editOrder = editOrderItem.newInstance(selectOrderItem);
+            editOrder.show(ft, "edit_order_item");
+
         }
-        adpOrder.notifyDataSetChanged();
+      /* adpOrder.notifyDataSetChanged();
         EditText txTotal = (EditText) findViewById(R.id.txTotal);
-        txTotal.setText(String.valueOf(general.ActiveOrder.getTotalItems()));
+        txTotal.setText(String.valueOf(general.ActiveOrder.getTotalItems()));*/
     }
 
     public boolean SaveOrder() {
-
-
-
+        if (general.ActiveOrder.Items.size() == 0)
+        {
+            Toast.makeText(this,getString(R.string.missing_value), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        general.ActiveOrder.location_name=Build.MANUFACTURER;
+        Gson gosn = new Gson();
+        String orderJson=gosn.toJson(general.ActiveOrder);
+        new general.ApiGetRequest().execute(general.ServiceURL + general.saveStatmentAPI
+                + general.ActiveUser.userId , "SaveStatment", orderJson);
         return true;
+    }
+
+    public  void SaveOrderResponse(String response){
+        if(response.equals("OK")){
+            Toast.makeText(this,getString(R.string.SavedSuccess), Toast.LENGTH_LONG).show();;
+            NewOrder();
+        }else{
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle(getString(R.string.app_name))
+                    .setMessage(getString(R.string.savefailed) + System.getProperty("line.separator") + response)
+                    .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }).show();
+        }
     }
 
     private void NewOrder() {

@@ -4,30 +4,34 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class order {
-    public String statment_id;
-    public int statment_number;
-    public byte statment_sub_number;
-    public byte statment_type_id;
+    protected String statment_id;
+    protected int statment_number;
+    protected byte statment_sub_number;
+    protected byte statment_type_id;
 
-    public String store_code;
-    public Date statment_date;
-    public String remarks;
-    public double statment_discount_net;
-    public String account_id ;
-    public String VenderAccount_id ;
-    public String account_name;
-    public String currency_id ;
-    public String currency_name ;
-    public double currency_value ;
-    public double Payment ;
-    public ArrayList<orderItem> Items;
+    protected String store_code;
+
+    protected String location_name;
+    protected Date statment_date;
+    protected String remarks;
+    protected double statment_discount_net;
+    protected String account_id ;
+    protected String VenderAccount_id ;
+    protected String account_name;
+    protected String currency_id ;
+    protected String currency_name ;
+    protected double currency_value ;
+    protected double Payment ;
+    protected int status;
+    protected ArrayList<orderItem> Items;
 
 
     public order()
     {
-        Items = new ArrayList<orderItem>();
+        status=0;
+        Items = new ArrayList<>();
     }
-    public double getTotalItems() {
+    protected double getTotalItems() {
         int i;
         double sum = 0;
         for(i = 0; i < Items.size(); i++)

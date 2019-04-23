@@ -1,23 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="5sp"
-    android:padding="5sp">
+    android:padding="5sp"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="5sp">
-
-        <TextView
-            android:id="@+id/tvName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textSize="18sp"
-            android:textStyle="bold" />
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -75,7 +64,8 @@
                                             android:layout_height="wrap_content"
                                             android:completionThreshold="2"
                                             android:maxLines="1"
-                                            android:singleLine="true"/>
+                                            android:singleLine="true"
+                                            android:hint="@string/supplier"/>
 
 
                                     </TableRow>
@@ -97,7 +87,8 @@
                                             android:ems="10"
                                             android:inputType="numberDecimal"
                                             android:maxLines="1"
-                                            android:singleLine="true"/>
+                                            android:singleLine="true"
+                                            android:autofillHints="@string/quntity"/>
 
                                         <TextView
                                             android:id="@+id/tvUnit"
@@ -362,7 +353,4 @@
             </LinearLayout>
         </ScrollView>
 
-    </LinearLayout>
-
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

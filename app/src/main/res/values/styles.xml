@@ -6,7 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+       <!-- <item name="android:textViewStyle">@style/AppTheme.myText</item>
+        <item name="android:editTextStyle">@style/AppTheme.myEdit</item>-->
     </style>
+
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -27,17 +30,31 @@
     </style>
 
 
-    <style name="AppTheme.myText" parent="android:TextAppearance.DeviceDefault.DialogWindowTitle">
+    <style name="AppTheme.myTitle" parent="android:TextAppearance.DeviceDefault.DialogWindowTitle">
         <item name="android:textColor">@color/colorText</item>
         <item name="android:layout_margin">2dp</item>
-
+        <item name="android:padding">2dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="AppTheme.myText" >
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="AppTheme.myTextOrang" >
+        <item name="android:textColor">@color/colorOrang</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="AppTheme.myEdit">
         <item name="android:background">@color/colorBgEdit</item>
         <item name="android:textColor">@color/colorWText</item>
-
-
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="AppTheme.myButton">
@@ -51,6 +68,7 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_margin">3dp</item>
         <item name="android:shadowColor">#70ff106d</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="AppTheme.myMainButton">

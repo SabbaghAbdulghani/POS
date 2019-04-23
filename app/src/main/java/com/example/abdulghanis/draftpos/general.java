@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -48,7 +49,8 @@ public final class general {
     private static String getProductByIdAPI = "home/getProductById?productid=";
     public static String getNewStatmentAPI = "home/getNewStatment";//userid=&storeCode=";
     public static String getLoginAPI = "home/login";
-    private static String saveStatmentAPI = "home/saveStatment?userid=";
+    public static String saveStatmentAPI = "home/saveStatment?userid=";
+    public static String saveTransactionAPI = "home/saveTransactionInOut?userid=";
 
 
     public static void setProducts(ArrayList<product> products) {
@@ -220,23 +222,28 @@ public final class general {
                 connection = (HttpURLConnection) myUrl.openConnection();
                 if (data.equals("")) {
                     connection.setRequestMethod("GET");
+                    connection.setDoInput(true);
                 } else {
                     connection.setRequestMethod("POST");
                     connection.setDoOutput(true);
 
+                    DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+                    wr.writeBytes("data=" + data);
+                    wr.flush();
+                    wr.close();
+/*
                     OutputStream outputPost = new BufferedOutputStream(connection.getOutputStream());
                     connection.setFixedLengthStreamingMode(data.getBytes().length);
                     connection.setChunkedStreamingMode(0);
-
                     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputPost, "UTF-8"));
-                    writer.write(data);
+                    writer.write("data="+ data);
                     writer.flush();
+                    */
                 }
                 //Set methods and timeouts
                 connection.setReadTimeout(READ_TIMEOUT);
                 connection.setConnectTimeout(CONNECTION_TIMEOUT);
 
-                connection.setDoInput(true);
                 //connection.setDoOutput(true);
                 //Connect to our url
                 connection.connect();
@@ -278,35 +285,39 @@ public final class general {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             Gson gosn = new Gson();
-            try{
+            try {
                 if (result == null || result.equals("")) {
-                    if (extras.equals("authentication")){
-                        if(ErrorMsg.contains("failed")) {
+                    if (extras.equals("authentication")) {
+                        if (ErrorMsg.contains("failed")) {
                             ((LoginActivity) AppMainActivity).setServiceUrl(ErrorMsg);
-                        }else{
+                        } else {
                             ((LoginActivity) AppMainActivity).NotAuthentican();
                         }
                     }
                     //  Toast.makeText(general.AppMainActivity,"error connect API", Toast.LENGTH_LONG);
                 } else if (extras.equals("accounts")) {
-                    TypeToken<List<account_info>> token = new TypeToken<List<account_info>>() { };
+                    TypeToken<List<account_info>> token = new TypeToken<List<account_info>>() {
+                    };
                     Accounts = (ArrayList<account_info>) gosn.fromJson(result, token.getType());
                     //general.ParseJsonAccounts(result);
                 } else if (extras.equals("products")) {
-                    TypeToken<List<product>> token = new TypeToken<List<product>>() {};
+                    TypeToken<List<product>> token = new TypeToken<List<product>>() {
+                    };
                     Products = (ArrayList<product>) gosn.fromJson(result, token.getType());
                     //general.ParseJsonProducts(result);
                 } else if (extras.equals("NewStatment")) {
-                    ActiveOrder=gosn.fromJson(result,order.class);
+                    ActiveOrder = gosn.fromJson(result, order.class);
                     //ParseOrder(result);
                     ((MainActivity) AppMainActivity).BindOrder();
                 } else if (extras.equals("authentication")) {
-                    ActiveUser=gosn.fromJson(result,sys_user.class);
+                    ActiveUser = gosn.fromJson(result, sys_user.class);
                     ((LoginActivity) AppMainActivity).startMainIntent();
-                   //ParseUser(result);
-                }
+                    //ParseUser(result);
+                } else if (extras.equals("SaveStatment")) {
+                    ((MainActivity) AppMainActivity).SaveOrderResponse(result);
 
-            }catch (Exception ex){
+                }
+            } catch (Exception ex) {
 
             }
 

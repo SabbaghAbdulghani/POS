@@ -8,25 +8,29 @@
 
     <TextView
         android:id="@+id/txTransAccountName"
+        style="@style/AppTheme.myText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:foreground="@color/colorWText"/>
+        android:textAlignment="viewStart" />
 
     <TextView
         android:id="@+id/txTransDescription"
+        style="@style/AppTheme.myText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
-        android:foreground="@color/colorWText" />
+        android:textAlignment="viewStart"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/txTransValue"
+        style="@style/AppTheme.myTextOrang"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
         android:text="0"
-        android:foreground="@color/colorWText"/>
+        android:textAlignment="textEnd" />
 </LinearLayout>
