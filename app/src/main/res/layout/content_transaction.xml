@@ -6,9 +6,11 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".TransactionActivity"
-    tools:showIn="@layout/activity_transaction">
+    tools:showIn="@layout/activity_transaction"
+    android:background="@color/colorBg">
 
     <LinearLayout
+        android:id="@+id/layListParent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -148,7 +150,9 @@
             android:id="@+id/lvTransItems"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:background="@color/colorYallow"
             style="@style/AppTheme.myText" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

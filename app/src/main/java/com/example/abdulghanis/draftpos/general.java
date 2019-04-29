@@ -1,6 +1,7 @@
 package com.example.abdulghanis.draftpos;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -43,6 +44,7 @@ public final class general {
     public static String ServiceURL = "";
 
 
+    private static String getImageAPI = "home/getImage?imageid=";
     private static String getAccountListAPI = "home/getAccountMiniList";
     private static String geAccountByIdAPI = "home/geAccountById?accid=";
     private static String getProductListListAPI = "home/getProductMiniList";
@@ -311,10 +313,15 @@ public final class general {
                     ((MainActivity) AppMainActivity).BindOrder();
                 } else if (extras.equals("authentication")) {
                     ActiveUser = gosn.fromJson(result, sys_user.class);
+                    refreshProducts();
+                    refreshAccounts();
                     ((LoginActivity) AppMainActivity).startMainIntent();
                     //ParseUser(result);
                 } else if (extras.equals("SaveStatment")) {
                     ((MainActivity) AppMainActivity).SaveOrderResponse(result);
+
+                } else if (extras.equals("SaveTransaction")) {
+                    ((TransactionActivity) AppMainActivity).SaveTransactionResponse(result);
 
                 }
             } catch (Exception ex) {

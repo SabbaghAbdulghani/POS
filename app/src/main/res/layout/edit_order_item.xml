@@ -193,7 +193,8 @@
                                         android:id="@+id/etNotes"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:inputType="textMultiLine" />
+                                        android:inputType="textMultiLine"
+                                        android:labelFor="@id/tvNotes"/>
 
 
                                 </LinearLayout>
@@ -339,15 +340,33 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <Button
-                        android:id="@+id/btCloseEditItem"
+                    android:orientation="horizontal" >
 
-                        android:layout_width="100sp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_centerHorizontal="true"
-                        android:text="@string/ok" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_centerInParent="true">
+
+                        <Button
+                            android:id="@+id/btCloseEditItem"
+                            android:layout_width="100sp"
+                            android:layout_height="wrap_content"
+                           android:layout_margin="5dp"
+                            style="@style/AppTheme.myMainButton"
+                            android:text="@string/ok" />
+
+                        <Button
+                            android:id="@+id/btDeleteItem"
+                            style="@style/AppTheme.myButton"
+                            android:layout_width="100sp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="@string/delete" />
+
+                    </LinearLayout>
+
+
                 </RelativeLayout>
 
             </LinearLayout>

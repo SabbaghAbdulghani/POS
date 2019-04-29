@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.AppCompatButton;
 import android.text.Layout;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -59,7 +60,9 @@ public class editOrderItem extends DialogFragment implements View.OnClickListene
         tabhost.addTab(tspac);
 
         Button btn = view.findViewById(R.id.btCloseEditItem);
+        Button btDeleteItem = view.findViewById(R.id.btDeleteItem);
         btn.setOnClickListener(this);
+        btDeleteItem.setOnClickListener(this);
         mainAc = (MainActivity) getActivity();
 
         return view;
@@ -80,11 +83,17 @@ public class editOrderItem extends DialogFragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        setOrderItemValue();
+        if (((AppCompatButton) v).getText().toString().equals(getString(R.string.delete))) {
+            general.ActiveOrder.Items.remove(_ordedritem);
+        } else {
+            setOrderItemValue();
+        }
+
         this.dismiss();
         //mainAc.adpOrder.notifyDataSetChanged();
         mainAc.BindOrder();
     }
+
 
     private void fillOrderItem() {
         _ordedritem = mainAc.selectOrderItem;

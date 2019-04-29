@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2sp"
+    android:padding="2dp"
     android:background="@color/colorPrimary">
 
 
@@ -22,7 +23,7 @@
         android:layout_weight="1"
         android:ems="10"
         android:textAlignment="viewStart"
-        android:textSize="16sp" />
+         />
 
     <TextView
         android:id="@+id/txTransValue"
@@ -32,5 +33,6 @@
         android:layout_weight="1"
         android:ems="10"
         android:text="0"
+        android:textSize="18sp"
         android:textAlignment="textEnd" />
 </LinearLayout>

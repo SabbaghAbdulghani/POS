@@ -48,6 +48,7 @@
     <string name="description">Description</string>
     <string name="value">Value</string>
     <string name="add">Add</string>
+    <string name="delete">Delete</string>
     <string name="missing_account">Missing data, please select account</string>
     <string name="missing_value">Missing data, please enter value</string>
     <string name="SavedSuccess">Saved Successfully</string>

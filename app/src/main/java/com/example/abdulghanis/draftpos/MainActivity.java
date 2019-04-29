@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -51,12 +52,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import android.graphics.Rect;
 
 public class MainActivity extends AppCompatActivity {
 
     public orderItem selectOrderItem;
     public listOrderAdapter adpOrder;
     AutoCompleteTextView actProduct;
+    ListView lvOrderItems;
     String[] arrProducts;
 
     @Override
@@ -67,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         general.AppMainActivity = this;
+        lvOrderItems = (ListView) findViewById(R.id.lvOrderItems);
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -82,13 +86,17 @@ public class MainActivity extends AppCompatActivity {
 
         InitActivity();
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        general.AppMainActivity =this;
+    }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
         general.AppMainActivity=null;
-        general.ActiveOrder=null;
+        //general.ActiveOrder=null;
         //System.exit(0);
     }
 
@@ -150,8 +158,24 @@ public class MainActivity extends AppCompatActivity {
 
 
         } else if (id == R.id.tbAccounts) {
+            Intent repIntent = new Intent(getApplicationContext(), reportActivity.class);
+            Bundle repBundle = new Bundle();
+            repBundle.putString("mode", "acc_balance");
+            repIntent.putExtras(repBundle);
+            startActivity(repIntent);
 
         } else if (id == R.id.tbProducts) {
+            Intent repIntent = new Intent(getApplicationContext(), reportActivity.class);
+            Bundle repBundle = new Bundle();
+            repBundle.putString("mode", "pro_balance");
+            repIntent.putExtras(repBundle);
+            startActivity(repIntent);
+        } else if (id == R.id.tbAccountBalance) {
+            Intent repIntent = new Intent(getApplicationContext(), reportActivity.class);
+            Bundle repBundle = new Bundle();
+            repBundle.putString("mode", "leged");
+            repIntent.putExtras(repBundle);
+            startActivity(repIntent);
 
         } else if (id == R.id.tbProfit) {
             Intent ProfitIntent = new Intent(getApplicationContext(), TransactionActivity.class);
@@ -175,14 +199,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void BindOrder() {
-        final ListView lv = (ListView) findViewById(R.id.lvOrderItems);
+
         for(int i=0;i<general.ActiveOrder.Items.size();i++)
             general.ActiveOrder.Items.get(i).ItemNO=i+1;
         adpOrder = new listOrderAdapter(general.ActiveOrder.Items);
-        lv.setAdapter(adpOrder);
+        lvOrderItems.setAdapter(adpOrder);
         EditText txTotal = (EditText) findViewById(R.id.txTotal);
 
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvOrderItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //edit order item
@@ -192,45 +216,6 @@ public class MainActivity extends AppCompatActivity {
         });
         txTotal.setText(String.valueOf(general.ActiveOrder.getTotalItems()));
 
-        /*
-        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                TextView tvItemId=(TextView)view.findViewById(R.id.tvItemId);
-                selectOrderItemId=tvItemId.getText().toString();
-
-                View.DragShadowBuilder mShadow = new View.DragShadowBuilder(view);
-                ClipData.Item item = new ClipData.Item(view.getTag().toString());
-                String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
-                ClipData data = new ClipData(view.getTag().toString(), mimeTypes, item);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    view.startDragAndDrop(data, mShadow, null, 0);
-                } else {
-                    view.startDrag(data, mShadow, null, 0);
-                }
-                return false;
-            }
-        });
-
-        lv.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-                if(selectOrderItemId!="" && event.getX()> Float.valueOf( lv.getWidth())){
-                   product _pro=general.getProductById(selectOrderItemId);
-                   if(_pro!=null){
-                       try {
-                           _order.Items.remove(_pro);
-                           InitOrdertViewOrder();
-                       }catch (Exception ex){
-
-                       }
-
-                   }
-                }
-                return false;
-            }
-        });
-        */
     }
 
 
@@ -300,8 +285,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //add item to order
-                TextView tvMenuProductId = (TextView) view.findViewById(R.id.tvMenuProductId);
-                product selectedProduct = general.getProductById(tvMenuProductId.getText().toString());
+                 product selectedProduct =(product) view.getTag();
                 if (selectedProduct != null) {
                     addOrderProduct(selectedProduct);
                 }
@@ -317,8 +301,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //add item to order
-                TextView tvMenuProductId = (TextView) view.findViewById(R.id.tvMenuProductId);
-                product selectedProduct = general.getProductById(tvMenuProductId.getText().toString());
+                product selectedProduct =(product)view.getTag();
                 if (selectedProduct != null) {
                     addOrderProduct(selectedProduct);
                 }
@@ -417,8 +400,32 @@ public class MainActivity extends AppCompatActivity {
             tvItemNotes.setText(item.product_note);
             tvItemId.setText(item.product_id);
 
+            /*
+            myView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    TextView tvItemId=v.findViewById(R.id.tvItemId);
+                    selectedItemId=tvItemId.getText().toString();
+
+                    View.DragShadowBuilder mShadow = new View.DragShadowBuilder(v);
+                    //ClipData.Item item = new ClipData.Item(v.getTag().toString());
+                    ClipData.Item item = new ClipData.Item(selectedItemId);
+                    String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
+                    //ClipData data = new ClipData(v.getTag().toString(), mimeTypes, item);
+                    ClipData data = new ClipData(selectedItemId, mimeTypes, item);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        v.startDragAndDrop(data, mShadow, null, 0);
+                    } else {
+                        v.startDrag(data, mShadow, null, 0);
+                    }
+                    return true;
+
+                }
+            });
+ */
             return myView;
         }
+
     }
 
     ///end list view adapter
@@ -452,24 +459,33 @@ public class MainActivity extends AppCompatActivity {
             LayoutInflater linflater = getLayoutInflater();
             View myView = linflater.inflate(R.layout.product_menu_view, null);
             TextView tvProductTitle = (TextView) myView.findViewById(R.id.tvProductTitle);
-            TextView tvMenuProductId = (TextView) myView.findViewById(R.id.tvMenuProductId);
             TextView tvProductPrice = (TextView) myView.findViewById(R.id.tvProductPrice);
             ImageView imgProduct = (ImageView) myView.findViewById(R.id.imgProduct);
 
             product item = _items.get(position);
 
             tvProductTitle.setText(item.product_name);
-            tvMenuProductId.setText(item.product_id);
+            myView.setTag(item);
             tvProductPrice.setText(String.valueOf(item.price1));
 
             try {
-                if (item.logo != null && item.logo.length > 0) {
-                    imgProduct.setImageBitmap(byteToBitmap(item.logo));
+                if(!item.color.equals("") && !item.color.equals("null")){
+                    //imgProduct.setBackgroundColor(Long.parseLong(item.color.substring(1),16));
+                    imgProduct.setBackgroundColor(Color.parseColor(item.color));
+                }
+                if (item.logo!=null){
+                    if (item.logo.length!=0) {
+                        //String urlStr=general.ServiceURL+ general.getLoginAPI+ item.product_id;
+                        //URL url=new URL(urlStr);
+                        //Bitmap mIcon_val = BitmapFactory.decodeStream(url.openConnection() .getInputStream());
+                        //imgProduct.setImageBitmap(mIcon_val);
+                        imgProduct.setImageBitmap(byteToBitmap(item.logo));
+                    }
                 } else {
                     imgProduct.setImageResource(R.drawable.label1);
                 }
             } catch (Exception ex) {
-
+               ex.printStackTrace();
             }
 
             // tvItemId.setText(item.product_id);
@@ -572,7 +588,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,getString(R.string.missing_value), Toast.LENGTH_LONG).show();
             return false;
         }
-        general.ActiveOrder.location_name=Build.MANUFACTURER;
+        //general.ActiveOrder.location_name=Build.MANUFACTURER+ " " +Build.BOARD + " "+ Build.USER;
+        general.ActiveOrder.location_name=Build.MANUFACTURER + Build.HOST;
         Gson gosn = new Gson();
         String orderJson=gosn.toJson(general.ActiveOrder);
         new general.ApiGetRequest().execute(general.ServiceURL + general.saveStatmentAPI
@@ -582,7 +599,10 @@ public class MainActivity extends AppCompatActivity {
 
     public  void SaveOrderResponse(String response){
         if(response.equals("OK")){
-            Toast.makeText(this,getString(R.string.SavedSuccess), Toast.LENGTH_LONG).show();;
+            Toast.makeText(this,getString(R.string.SavedSuccess), Toast.LENGTH_LONG).show();
+            general.refreshProducts();
+            general.refreshAccounts();
+
             NewOrder();
         }else{
             new AlertDialog.Builder(this)
@@ -600,9 +620,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void NewOrder() {
         //general.refreshProducts(loadFile("products.json"));
-        general.refreshProducts();
-        general.refreshAccounts();
-        InitProductsCategory();
+          InitProductsCategory();
 
         new general.ApiGetRequest().execute(general.ServiceURL + general.getNewStatmentAPI
                 + "?userid=" + general.ActiveUser.userId + "&storeCode=" + general.StoreCode, "NewStatment");
@@ -615,7 +633,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             InputStream fis = getAssets().open(fileName);
             //FileInputStream fis = this.openFileInput(fileName);
-            String myStr = "";
+            String myStr;
             int fsize = fis.available();
             byte[] buffer = new byte[fsize];
             fis.read(buffer);

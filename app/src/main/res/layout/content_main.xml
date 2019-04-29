@@ -169,10 +169,10 @@
                         android:background="@color/colorBgEdit"
                         android:columnWidth="90dp"
                         android:gravity="center"
-                        android:horizontalSpacing="4dp"
+                        android:horizontalSpacing="2dp"
                         android:numColumns="auto_fit"
                         android:stretchMode="spacingWidthUniform"
-                        android:verticalSpacing="4dp" />
+                        android:verticalSpacing="2dp" />
 
                     <GridView
                         android:id="@+id/gvCats"

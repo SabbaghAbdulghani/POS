@@ -13,4 +13,5 @@
     <color name="colorOrang">#f39200</color>
     <color name="colorOrangLow">#FFAA00</color>
     <color name="colorOrang_aloha">#66f39200</color>
+    <color name="colorDarkGray_alpha">#A0202020</color>
 </resources>
