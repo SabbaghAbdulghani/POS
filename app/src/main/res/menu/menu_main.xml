@@ -42,7 +42,7 @@
         app:showAsAction="collapseActionView"
         android:orderInCategory="1"  />
     <item android:id="@+id/tbAccountBalance"
-        android:title="@string/accountList"
+        android:title="@string/ledger"
         app:showAsAction="collapseActionView"
         android:orderInCategory="1"  />
 

@@ -33,7 +33,8 @@ import com.google.gson.reflect.TypeToken;
 public final class general {
     public static Activity AppMainActivity;
     public static ArrayList<product> Products = new ArrayList<>();
-    private static ArrayList<account_info> Accounts = new ArrayList<>();
+    public static ArrayList<account_info> Accounts = new ArrayList<>();
+    public static ArrayList<app_notification> notificationsList;
     public static String CurrencyName = "SYP";
     public static sys_user ActiveUser = new sys_user();
     public static order ActiveOrder;
@@ -49,14 +50,44 @@ public final class general {
     private static String geAccountByIdAPI = "home/geAccountById?accid=";
     private static String getProductListListAPI = "home/getProductMiniList";
     private static String getProductByIdAPI = "home/getProductById?productid=";
-    public static String getNewStatmentAPI = "home/getNewStatment";//userid=&storeCode=";
-    public static String getLoginAPI = "home/login";
-    public static String saveStatmentAPI = "home/saveStatment?userid=";
-    public static String saveTransactionAPI = "home/saveTransactionInOut?userid=";
+    //public static String getNewStatmentAPI = "home/getNewStatment";//userid=&storeCode=";
+    //public static String getAPIStatment = "home/geStatmentById?id=";//userid=";
+    //public static String getLoginAPI = "home/login";
+    //public static String saveStatmentAPI = "home/saveStatment?userid=";
+    //public static String saveTransactionAPI = "home/saveTransactionInOut?userid=";
+    //public static String getApiRepAccountBalance = "home/getAccountBalance";
+    //public static String getApiRepProductBalance = "home/getProductBalance";
+    //public static String getApiRepledger = "home/ledger?accid=";
+    //public static String getApiNotification = "home/getNotification?storecode=";
+    //public static String getApiCloseNotification = "home/closeNotify?storecode=";
+/*
+
+ public static ArrayList<product>  getProducts(){
+        return _Products;
+    }
+    public static ArrayList<account_info> getAccounts(){
+       return _Accounts;
+    }
+    public static String getCurrencyName(){
+        return _CurrencyName;
+    }
+    public static sys_user getActiveUser(){
+        return _ActiveUser;
+    }
+    public static void setActiveOrder(order _order){
+        _ActiveOrder=_order;
+    }
+    public static order getActiveOrder(){
+        return _ActiveOrder;
+    }
+    public static void setProducts(ArrayList<product> _products) {
+        Products = _products;
+    }
+ */
 
 
-    public static void setProducts(ArrayList<product> products) {
-        Products = products;
+    public static void setProducts(ArrayList<product> _products) {
+        Products = _products;
     }
 
     public static ArrayList<product> getProductCategories() {
@@ -277,7 +308,7 @@ public final class general {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-
+                        e.printStackTrace();
                     }
                 }
             }
@@ -300,12 +331,12 @@ public final class general {
                 } else if (extras.equals("accounts")) {
                     TypeToken<List<account_info>> token = new TypeToken<List<account_info>>() {
                     };
-                    Accounts = (ArrayList<account_info>) gosn.fromJson(result, token.getType());
+                    Accounts = gosn.fromJson(result, token.getType());
                     //general.ParseJsonAccounts(result);
                 } else if (extras.equals("products")) {
                     TypeToken<List<product>> token = new TypeToken<List<product>>() {
                     };
-                    Products = (ArrayList<product>) gosn.fromJson(result, token.getType());
+                    Products = gosn.fromJson(result, token.getType());
                     //general.ParseJsonProducts(result);
                 } else if (extras.equals("NewStatment")) {
                     ActiveOrder = gosn.fromJson(result, order.class);
@@ -323,9 +354,31 @@ public final class general {
                 } else if (extras.equals("SaveTransaction")) {
                     ((TransactionActivity) AppMainActivity).SaveTransactionResponse(result);
 
+                } else if (extras.equals("acc_balance")) {
+                    TypeToken<List<repBalanceDataset>> token = new TypeToken<List<repBalanceDataset>>() {
+                    };
+                    ArrayList<repBalanceDataset> myList = gosn.fromJson(result, token.getType());
+                    ((reportActivity) AppMainActivity).BindRepAccountsBalance(myList);
+
+                } else if (extras.equals("pro_balance")) {
+                    TypeToken<List<repBalanceProductDataset>> token = new TypeToken<List<repBalanceProductDataset>>() {
+                    };
+                    ArrayList<repBalanceProductDataset> myList = gosn.fromJson(result, token.getType());
+                    ((reportActivity) AppMainActivity).BindRepProductsBalance(myList);
+
+                } else if (extras.equals("rep_ledger")) {
+                    TypeToken<List<repLedgerDataset>> token = new TypeToken<List<repLedgerDataset>>() {
+                    };
+                    ArrayList<repLedgerDataset> myList = (ArrayList<repLedgerDataset>) gosn.fromJson(result, token.getType());
+                    ((reportledgerActivity) AppMainActivity).BindLedger(myList);
+
+                } else if (extras.equals("notification")) {
+                    TypeToken<List<app_notification>> token = new TypeToken<List<app_notification>>() {
+                    };
+                    notificationsList = (ArrayList<app_notification>) gosn.fromJson(result, token.getType());
                 }
             } catch (Exception ex) {
-
+                ex.printStackTrace();
             }
 
         }

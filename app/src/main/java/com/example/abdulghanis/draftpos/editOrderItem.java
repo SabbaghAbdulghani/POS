@@ -29,7 +29,6 @@ public class editOrderItem extends DialogFragment implements View.OnClickListene
     orderItem _ordedritem = null;
     EditText etQuntity;
 
-
     public editOrderItem() {
 
     }
@@ -41,7 +40,6 @@ public class editOrderItem extends DialogFragment implements View.OnClickListene
         frag.setArguments(args);
         return frag;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {

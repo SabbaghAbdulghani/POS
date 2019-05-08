@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -51,16 +52,30 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.graphics.Rect;
 
 public class MainActivity extends AppCompatActivity {
+
+    String APINewStatment = "home/getNewStatment";//userid=&storeCode=";
+    String APIStatment = "home/geStatmentById?id=";//userid=";
+    String APIsaveStatment = "home/saveStatment?userid=";
+    String ApiNotification = "home/getNotification?storecode=";
+    String ApiCloseNotification = "home/closeNotify?storecode=";
 
     public orderItem selectOrderItem;
     public listOrderAdapter adpOrder;
     AutoCompleteTextView actProduct;
     ListView lvOrderItems;
     String[] arrProducts;
+    Timer notifyTimer;
+    NotifyTask _NotifyTask;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         general.AppMainActivity = this;
-        lvOrderItems = (ListView) findViewById(R.id.lvOrderItems);
+        lvOrderItems = findViewById(R.id.lvOrderItems);
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -78,18 +93,53 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // for notification
-                Snackbar.make(view, "This section for notification edit invoice", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (general.notificationsList != null && general.notificationsList.size() > 0) {
+                    //for(int ind=0; ind<general.notificationsList.size();ind++ ) {
+                        final app_notification appnotify = general.notificationsList.get(0);
+                        String msg = appnotify.notification_type;
+                        if (!appnotify.StatmentNo.equals(""))
+                            msg += " " + appnotify.StatmentNo;
+                        msg += " : " + appnotify.body;
+
+                        Snackbar snak = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
+
+                        snak.setAction(getString(R.string.open), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                geNotify(appnotify);
+                            }
+                        });
+                        snak.show();
+
+                    //}
+
+                }
             }
         });
-        actProduct = (AutoCompleteTextView) findViewById(R.id.actProduct);
+        actProduct = findViewById(R.id.actProduct);
 
         InitActivity();
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        if(notifyTimer!=null) {
+            notifyTimer.cancel();
+            notifyTimer = null;
+        }
     }
     @Override
     protected void onResume() {
         super.onResume();
         general.AppMainActivity =this;
+
+        if(notifyTimer!=null)
+            notifyTimer.cancel();
+
+        notifyTimer=new Timer();
+        _NotifyTask=new NotifyTask();
+        notifyTimer.schedule(_NotifyTask,10000, 30000);
     }
 
     @Override
@@ -156,25 +206,24 @@ public class MainActivity extends AppCompatActivity {
                     .setNegativeButton(getString(R.string.no), null)
                     .show();
 
-
         } else if (id == R.id.tbAccounts) {
             Intent repIntent = new Intent(getApplicationContext(), reportActivity.class);
             Bundle repBundle = new Bundle();
-            repBundle.putString("mode", "acc_balance");
+            repBundle.putString("rep_mode", "acc_balance");
             repIntent.putExtras(repBundle);
             startActivity(repIntent);
 
         } else if (id == R.id.tbProducts) {
             Intent repIntent = new Intent(getApplicationContext(), reportActivity.class);
             Bundle repBundle = new Bundle();
-            repBundle.putString("mode", "pro_balance");
+            repBundle.putString("rep_mode", "pro_balance");
             repIntent.putExtras(repBundle);
             startActivity(repIntent);
         } else if (id == R.id.tbAccountBalance) {
-            Intent repIntent = new Intent(getApplicationContext(), reportActivity.class);
-            Bundle repBundle = new Bundle();
-            repBundle.putString("mode", "leged");
-            repIntent.putExtras(repBundle);
+            Intent repIntent = new Intent(getApplicationContext(), reportledgerActivity.class);
+            //Bundle repBundle = new Bundle();
+            //repBundle.putString("rep_mode", "leged");
+            //repIntent.putExtras(repBundle);
             startActivity(repIntent);
 
         } else if (id == R.id.tbProfit) {
@@ -204,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
             general.ActiveOrder.Items.get(i).ItemNO=i+1;
         adpOrder = new listOrderAdapter(general.ActiveOrder.Items);
         lvOrderItems.setAdapter(adpOrder);
-        EditText txTotal = (EditText) findViewById(R.id.txTotal);
+        EditText txTotal = findViewById(R.id.txTotal);
 
         lvOrderItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -260,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
                     arrProducts = general.getProductsArray();
-                    ArrayAdapter<String> adpPro = new ArrayAdapter<String>(general.AppMainActivity, android.R.layout.simple_list_item_1, arrProducts);
+                    ArrayAdapter<String> adpPro = new ArrayAdapter<>(general.AppMainActivity, android.R.layout.simple_list_item_1, arrProducts);
                     actProduct.setAdapter(adpPro);
                 }
             }
@@ -277,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void InitProductsMenu(String parentId) {
-        GridView gv = (GridView) findViewById(R.id.gvProducts);
+        GridView gv = findViewById(R.id.gvProducts);
         final ArrayList<product> products = general.getProducts(parentId);
         productsMenuAdapter adp = new productsMenuAdapter(products);
         gv.setAdapter(adp);
@@ -294,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void InitProductsMenu(ArrayList<product> products) {
-        GridView gv = (GridView) findViewById(R.id.gvProducts);
+        GridView gv = findViewById(R.id.gvProducts);
         productsMenuAdapter adp = new productsMenuAdapter(products);
         gv.setAdapter(adp);
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -310,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void InitProductsCategory() {
-        GridView gv = (GridView) findViewById(R.id.gvCats);
+        GridView gv = findViewById(R.id.gvCats);
         ArrayList<product> cats = general.getProductCategories();
         CategoryMenuAdapter adp = new CategoryMenuAdapter(cats);
         gv.setAdapter(adp);
@@ -318,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //add item to order
-                TextView tvCategoryId = (TextView) view.findViewById(R.id.tvCategoryId);
+                TextView tvCategoryId = view.findViewById(R.id.tvCategoryId);
                 InitProductsMenu(tvCategoryId.getText().toString());
             }
         });
@@ -326,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
 
         //final AutoCompleteTextView actProduct = (AutoCompleteTextView) findViewById(R.id.actProduct);
         arrProducts = general.getProductsArray();
-        ArrayAdapter<String> adpPro = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrProducts);
+        ArrayAdapter<String> adpPro = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrProducts);
         //////ArrayAdapter<String> adpPro = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrProducts);
         actProduct.setAdapter(adpPro);
 
@@ -392,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
             tvNO.setText(String.valueOf(item.ItemNO));
             //tvItemPrice.setText(item.getPriceString());
             tvItemQn.setText((item.Quntity) + " " + item.Unit);
-            if (item.PartUnit != null && !item.PartUnit.equals("")) {
+            if (_product!= null && item.PartUnit != null && !item.PartUnit.equals("")) {
                 tvItemPartialQn.setText(" - " + (item.Quntity * _product.part_quntity) + item.PartUnit + " - ");
             }
             tvItemPrice.setText(getString(R.string.price) + " : " + (item.price));
@@ -458,9 +507,9 @@ public class MainActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater linflater = getLayoutInflater();
             View myView = linflater.inflate(R.layout.product_menu_view, null);
-            TextView tvProductTitle = (TextView) myView.findViewById(R.id.tvProductTitle);
-            TextView tvProductPrice = (TextView) myView.findViewById(R.id.tvProductPrice);
-            ImageView imgProduct = (ImageView) myView.findViewById(R.id.imgProduct);
+            TextView tvProductTitle = myView.findViewById(R.id.tvProductTitle);
+            TextView tvProductPrice = myView.findViewById(R.id.tvProductPrice);
+            ImageView imgProduct = myView.findViewById(R.id.imgProduct);
 
             product item = _items.get(position);
 
@@ -525,8 +574,8 @@ public class MainActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater linflater = getLayoutInflater();
             View myView = linflater.inflate(R.layout.category_menu, null);
-            TextView tvCategoryTitle = (TextView) myView.findViewById(R.id.tvCategoryTitle);
-            TextView tvCategoryId = (TextView) myView.findViewById(R.id.tvCategoryId);
+            TextView tvCategoryTitle = myView.findViewById(R.id.tvCategoryTitle);
+            TextView tvCategoryId = myView.findViewById(R.id.tvCategoryId);
             product item = _items.get(position);
 
             tvCategoryTitle.setText(item.product_name);
@@ -539,6 +588,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     ///end grid view adapter
+
+
+//notification
+    class NotifyTask extends TimerTask {
+    @Override
+    public void run() {
+        new general.ApiGetRequest().execute(general.ServiceURL + ApiNotification + general.StoreCode
+                + "&username=" + general.ActiveUser.userName, "notification");
+
+        Calendar calender = Calendar.getInstance();
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd:MMM:yyyy HH:mm:ss");
+        final String strDate = dateformat.format(calender.getTime());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InitNotification();
+            }
+        });
+    }
+}
+//////////
+
 
 
     //adding to order
@@ -577,9 +648,6 @@ public class MainActivity extends AppCompatActivity {
             editOrder.show(ft, "edit_order_item");
 
         }
-      /* adpOrder.notifyDataSetChanged();
-        EditText txTotal = (EditText) findViewById(R.id.txTotal);
-        txTotal.setText(String.valueOf(general.ActiveOrder.getTotalItems()));*/
     }
 
     public boolean SaveOrder() {
@@ -589,10 +657,10 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         //general.ActiveOrder.location_name=Build.MANUFACTURER+ " " +Build.BOARD + " "+ Build.USER;
-        general.ActiveOrder.location_name=Build.MANUFACTURER + Build.HOST;
+        general.ActiveOrder.location_name=Build.MANUFACTURER;
         Gson gosn = new Gson();
         String orderJson=gosn.toJson(general.ActiveOrder);
-        new general.ApiGetRequest().execute(general.ServiceURL + general.saveStatmentAPI
+        new general.ApiGetRequest().execute(general.ServiceURL + APIsaveStatment
                 + general.ActiveUser.userId , "SaveStatment", orderJson);
         return true;
     }
@@ -618,11 +686,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void InitNotification (){
+        if(general.notificationsList!=null  && general.notificationsList.size()>0){
+            findViewById(R.id.fab).setVisibility(View.VISIBLE);
+        }else{
+            findViewById(R.id.fab).setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void geNotify(app_notification entity){
+        if(!entity.ref_id.equals("")){
+            new general.ApiGetRequest().execute(general.ServiceURL + APIStatment + entity.ref_id
+                    + "&userid=" + general.ActiveUser.userId , "NewStatment");
+        }
+            new general.ApiGetRequest().execute(general.ServiceURL + ApiCloseNotification + general.StoreCode
+                    + "&id=" + entity.sys_notification_id
+                    + "&username=" + general.ActiveUser.userName , "notification");
+
+
+    }
+
     private void NewOrder() {
         //general.refreshProducts(loadFile("products.json"));
           InitProductsCategory();
 
-        new general.ApiGetRequest().execute(general.ServiceURL + general.getNewStatmentAPI
+        new general.ApiGetRequest().execute(general.ServiceURL + APINewStatment
                 + "?userid=" + general.ActiveUser.userId + "&storeCode=" + general.StoreCode, "NewStatment");
         //general.ActiveOrder = general.NewOrder();
         //BindOrder();

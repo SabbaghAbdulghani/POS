@@ -6,8 +6,6 @@ import android.content.ClipDescription;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -35,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class TransactionActivity extends AppCompatActivity {
+
+    String APIsaveTransaction = "home/saveTransactionInOut?userid=";
 
     private transaction_header transaction = new transaction_header();
     String transaction_type = "in";
@@ -98,7 +98,7 @@ public class TransactionActivity extends AppCompatActivity {
                             }
 
                         } catch (Exception ex) {
-
+                            ex.printStackTrace();
                         }
                     }
                 }
@@ -134,7 +134,7 @@ public class TransactionActivity extends AppCompatActivity {
             transaction.location_create=Build.MANUFACTURER;
             Gson gosn = new Gson();
             String TransactionJson=gosn.toJson(transaction);
-            new general.ApiGetRequest().execute(general.ServiceURL + general.saveTransactionAPI
+            new general.ApiGetRequest().execute(general.ServiceURL + APIsaveTransaction
                     + general.ActiveUser.userId , "SaveTransaction", TransactionJson);
 
         } else if (id == R.id.tbpBack) {
@@ -168,8 +168,8 @@ public class TransactionActivity extends AppCompatActivity {
 
     private void InitTransaction() {
         final String[] arrAccounts = general.getAccountsArray();
-        final AutoCompleteTextView actCustomer = (AutoCompleteTextView) findViewById(R.id.txCustomer);
-        ArrayAdapter<String> adpAcc = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, arrAccounts);
+        final AutoCompleteTextView actCustomer = findViewById(R.id.txCustomer);
+        ArrayAdapter<String> adpAcc = new ArrayAdapter<>(this, android.R.layout.select_dialog_item, arrAccounts);
         actCustomer.setAdapter(adpAcc);
         actCustomer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -177,6 +177,7 @@ public class TransactionActivity extends AppCompatActivity {
 
             }
         });
+        /*
         actCustomer.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -185,7 +186,7 @@ public class TransactionActivity extends AppCompatActivity {
                 }
             }
         });
-
+*/
     }
 
     private void newTransaction() {
@@ -196,7 +197,7 @@ public class TransactionActivity extends AppCompatActivity {
             transaction.build_from = 2;
         } else {
             toolbar.setTitle(getString(R.string.payment_transaction));
-            TextView tvAcc = (TextView) findViewById(R.id.tvAcc);
+            TextView tvAcc = findViewById(R.id.tvAcc);
             tvAcc.setText(getString(R.string.debit_account));
             transaction.build_from = 3;
         }
@@ -215,9 +216,9 @@ public class TransactionActivity extends AppCompatActivity {
     }
 
     private void addAccountValue() {
-        AutoCompleteTextView txCustomer = (AutoCompleteTextView) findViewById(R.id.txCustomer);
-        EditText txValue = (EditText) findViewById(R.id.txValue);
-        EditText txDescription = (EditText) findViewById(R.id.txDescription);
+        AutoCompleteTextView txCustomer = findViewById(R.id.txCustomer);
+        EditText txValue = findViewById(R.id.txValue);
+        EditText txDescription = findViewById(R.id.txDescription);
         double value = 0;
         if (!txValue.getText().toString().equals("")) {
             value = Double.valueOf(txValue.getText().toString());
@@ -299,9 +300,9 @@ public class TransactionActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater linflater = getLayoutInflater();
             final View myView = linflater.inflate(R.layout.transaction_row_view, null);
-            TextView txTransAccountName = (TextView) myView.findViewById(R.id.txTransAccountName);
-            TextView etTransDescription = (TextView) myView.findViewById(R.id.txTransDescription);
-            TextView etTransValue = (TextView) myView.findViewById(R.id.txTransValue);
+            TextView txTransAccountName =  myView.findViewById(R.id.txTransAccountName);
+            TextView etTransDescription =  myView.findViewById(R.id.txTransDescription);
+            TextView etTransValue = myView.findViewById(R.id.txTransValue);
 
             transaction_detail item = _items.get(position);
             txTransAccountName.setText(item.account_name);

@@ -12,7 +12,7 @@ public class order {
     protected String store_code;
 
     protected String location_name;
-    protected Date statment_date;
+    //protected Date statment_date;
     protected String remarks;
     protected double statment_discount_net;
     protected String account_id ;

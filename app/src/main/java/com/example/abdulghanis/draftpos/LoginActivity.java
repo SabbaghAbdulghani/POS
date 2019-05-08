@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.icu.util.TimeUnit;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -48,9 +49,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity  {//implements LoaderCallbacks<Cursor>
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
+    String APILogin = "home/login";
     private static final int REQUEST_READ_CONTACTS = 0;
 
 
@@ -79,7 +78,7 @@ public class LoginActivity extends AppCompatActivity  {//implements LoaderCallba
             }
         });*/
 
-        btLogin=(Button)findViewById(R.id.btLogin);
+        btLogin = findViewById(R.id.btLogin);
         btLogin.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,7 +118,7 @@ public class LoginActivity extends AppCompatActivity  {//implements LoaderCallba
 
         general.AppMainActivity=this;
         btLogin.setEnabled(false);
-        new general.ApiGetRequest().execute(general.ServiceURL + general.getLoginAPI
+        new general.ApiGetRequest().execute(general.ServiceURL + APILogin
                 + "?username=" + userName +"&password=" + password, "authentication");
 
     }
@@ -143,7 +142,8 @@ public class LoginActivity extends AppCompatActivity  {//implements LoaderCallba
         editor.putString("userName", userName);
         editor.apply();
 
-        Intent mainIntent=new Intent(getApplicationContext(), MainActivity.class);
+        //Intent mainIntent=new Intent(getApplicationContext(), MainActivity.class);
+        Intent mainIntent=new Intent(getApplicationContext(), splashActivity.class);
         startActivity(mainIntent);
         finish();
     }

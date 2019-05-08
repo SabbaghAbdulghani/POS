@@ -21,12 +21,12 @@ public class OrderSaveActivity extends AppCompatActivity {
 
     private MainActivity mainAc;
 
-    //private order _order;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_save);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //this.getPackageManager()
@@ -54,7 +54,6 @@ public class OrderSaveActivity extends AppCompatActivity {
             setOrderValues();
             if (mainAc.SaveOrder()) {
                 this.finish();
-                ;
             }
         } else if (id == R.id.tbpBack) {
             this.finish();
@@ -66,8 +65,9 @@ public class OrderSaveActivity extends AppCompatActivity {
 
     private void BindOrder() {
         final String[] arrAccounts = general.getAccountsArray();
-        AutoCompleteTextView actCustomer = (AutoCompleteTextView) findViewById(R.id.txCustomer);
-        ArrayAdapter<String> adpAcc = new ArrayAdapter<String>(mainAc, android.R.layout.select_dialog_item, arrAccounts);
+        AutoCompleteTextView actCustomer = findViewById(R.id.txCustomer);
+        //ArrayAdapter<String> adpAcc = new ArrayAdapter<String>(mainAc, android.R.layout.select_dialog_item, arrAccounts);
+        ArrayAdapter<String> adpAcc = new ArrayAdapter<>(this, android.R.layout.select_dialog_item, arrAccounts);
         actCustomer.setAdapter(adpAcc);
         actCustomer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -81,11 +81,11 @@ public class OrderSaveActivity extends AppCompatActivity {
         });
 
 
-        final EditText txTotal = (EditText) findViewById(R.id.txTotal);
-        final EditText txDiscount = (EditText) findViewById(R.id.txDiscount);
-        final EditText txPaid = (EditText) findViewById(R.id.txPaid);
-        final EditText txUnPaid = (EditText) findViewById(R.id.txUnPaid);
-        EditText txNotes = (EditText) findViewById(R.id.txNotes);
+        final EditText txTotal = findViewById(R.id.txTotal);
+        final EditText txDiscount = findViewById(R.id.txDiscount);
+        final EditText txPaid = findViewById(R.id.txPaid);
+        final EditText txUnPaid = findViewById(R.id.txUnPaid);
+        EditText txNotes = findViewById(R.id.txNotes);
 
         txTotal.setText(String.valueOf(general.ActiveOrder.getTotalItems()));
         txDiscount.setText(String.valueOf(general.ActiveOrder.statment_discount_net));
@@ -151,7 +151,7 @@ public class OrderSaveActivity extends AppCompatActivity {
     }
 
     private void setOrderValues() {
-        EditText txNotes = (EditText) findViewById(R.id.txNotes);
+        EditText txNotes = findViewById(R.id.txNotes);
         general.ActiveOrder.remarks = txNotes.getText().toString();
     }
 

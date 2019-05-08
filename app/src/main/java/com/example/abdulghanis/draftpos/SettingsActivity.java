@@ -18,26 +18,21 @@ public class SettingsActivity extends AppCompatActivity {
     Switch swPhotoAlbum;
     EditText etStore;
     EditText etURL;
-    //EditText etUserName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        swViewProductMenus=(Switch)findViewById(R.id.swViewProductMenus);
-        swAutoEditSalesItem=(Switch)findViewById(R.id.swAutoEditSalesItem);
-        swPhotoAlbum=(Switch)findViewById(R.id.swPhotoAlbum);
-        etStore=(EditText)findViewById(R.id.etStore);
-        etURL=(EditText)findViewById(R.id.etURL);
+        swViewProductMenus= findViewById(R.id.swViewProductMenus);
+        swAutoEditSalesItem= findViewById(R.id.swAutoEditSalesItem);
+        swPhotoAlbum= findViewById(R.id.swPhotoAlbum);
+        etStore= findViewById(R.id.etStore);
+        etURL= findViewById(R.id.etURL);
         //etUserName=(EditText)findViewById(R.id.etUserName);
 
         preferences=getSharedPreferences("POS_PREF",0);
-
-        //general.ViewProductMenus=preferences.getBoolean("ViewProductMenus", false);
-        //general.PhotoAlbum=preferences.getBoolean("PhotoAlbum", false);
-       //general.StoreCode=preferences.getString("StoreCode", "");
-        //general.ServiceURL=preferences.getString("ServiceURL", "");
 
 
         swViewProductMenus.setChecked(general.ViewProductMenus);
