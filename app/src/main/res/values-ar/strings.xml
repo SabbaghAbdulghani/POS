@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">POSLite</string>
+    <string name="save">حفظ</string>
+    <string name="cancel">الغاء</string>
+    <string name="productsList">ارصدة المواد</string>
+    <string name="accountList">ارصدة الحسابات</string>
+    <string name="ledger">دفتر الاستاذ</string>
+    <string name="profit">الايرادات</string>
+    <string name="payments">المدفوعات</string>
+    <string name="quntity">الكمية</string>
+    <string name="unit">الوحدة</string>
+    <string name="sub_unit">الوحدة الجزئية</string>
+    <string name="price">السعر</string>
+    <string name="store_qn">المستودع</string>
+    <string name="cost">الكلفة</string>
+    <string name="sales_price">سعر المبيع</string>
+    <string name="details">التقصيلات</string>
+    <string name="product_info">تفصيلات المادة</string>
+    <string name="partial_quantity">الكمية الجزئية</string>
+    <string name="ok">موافق</string>
+    <string name="exit">خروج</string>
+    <string name="open">فتح</string>
+
+    <string name="action_settings">اعدادات</string>
+    <string name="customer">الزبون</string>
+    <string name="supplier">المورد</string>
+    <string name="account">الحساب</string>
+    <string name="debit_account">الحساب المدين</string>
+    <string name="credit_account">الحساب الدائن</string>
+    <string name="product">المادة</string>
+    <string name="product_hit">اختر مادة</string>
+    <string name="notes">ملاحظات</string>
+    <string name="barcode">باركود</string>
+    <string name="barcode_notfound">رمز الباركود غير متوفر</string>
+    <string name="scnBarcode">باركود</string>
+    <string name="total">المجموع</string>
+    <string name="discount">الحسميات</string>
+    <string name="paid">المدفوع</string>
+    <string name="unpaid">المتبقي</string>
+    <string name="title_activity_order_save">خفظ الفاتورة</string>
+    <string name="alert_new_order">سيتم الغاء الفاتورة الحالية، هل تريد الاستمرار؟</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
+    <string name="store">رمز المستودع</string>
+    <string name="view_product_menu">عرض قائمة المواد</string>
+    <string name="AutoEditSalesItem">تعديل الكمية للمنتج عند اضافته للفاتورة</string>
+    <string name="photo_albums">معرض الصور</string>
+    <string name="service_url">رابط المخدم</string>
+    <string name="error_url">يرجى التحقق من رابط المخدم</string>
+    <string name="title_activity_login">تسجيل دخول</string>
+    <string name="description">الوصف</string>
+    <string name="value">القيمة</string>
+    <string name="add">اضافة</string>
+    <string name="delete">حذف</string>
+    <string name="missing_account">المعلومات غير مكتملة، ادخل الحساب</string>
+    <string name="missing_value">المعلومات غير مكتملة، ادخل القيمة</string>
+    <string name="SavedSuccess">تم الحفظ بنجاخ</string>
+    <string name="savefailed">فشل الحفظ</string>
+    <string name="balance">الرصيد</string>
+    <string name="date">التاريخ</string>
+    <string name="explantion">الشرح</string>
+    <string name="Depit">مدين</string>
+    <string name="Credit">دائن</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_user_name">اسم المستخدم</string>
+    <string name="prompt_password">رمز المرور</string>
+    <string name="error_invalid_user_name">اسم المستخدم او رمز المرور غير صحيح</string>
+    <string name="error_field_required">حقل الزامي</string>
+    <string name="title_activity_transaction">قيد ايرادات</string>
+    <string name="payment_transaction">قيد مدفوعات</string>
+
+    <string name="title_activity_splash">POSLite</string>
+    <string name="language">اللغة</string>
+    <string name="English">English</string>
+    <string name="Arabic">عربي</string>
+
+</resources>

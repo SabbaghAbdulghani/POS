@@ -35,6 +35,7 @@ public final class general {
     public static ArrayList<product> Products = new ArrayList<>();
     public static ArrayList<account_info> Accounts = new ArrayList<>();
     public static ArrayList<app_notification> notificationsList;
+    public static appcfg CFG;
     public static String CurrencyName = "SYP";
     public static sys_user ActiveUser = new sys_user();
     public static order ActiveOrder;
@@ -50,6 +51,7 @@ public final class general {
     private static String geAccountByIdAPI = "home/geAccountById?accid=";
     private static String getProductListListAPI = "home/getProductMiniList";
     private static String getProductByIdAPI = "home/getProductById?productid=";
+    private static String getAPICFG = "home/getCfg";
     //public static String getNewStatmentAPI = "home/getNewStatment";//userid=&storeCode=";
     //public static String getAPIStatment = "home/geStatmentById?id=";//userid=";
     //public static String getLoginAPI = "home/login";
@@ -119,6 +121,16 @@ public final class general {
         for (int i = 0; i < Products.size(); i++) {
             pro = Products.get(i);
             if (pro.product_type != 0 && pro.product_id.equals(productId)) {
+                return pro;
+            }
+        }
+        return null;
+    }
+    public static product getProductByBarcode(String barcode) {
+        product pro;
+        for (int i = 0; i < Products.size(); i++) {
+            pro = Products.get(i);
+            if (pro.product_type != 0 && pro.product_barcode.equals(barcode)) {
                 return pro;
             }
         }
@@ -344,6 +356,7 @@ public final class general {
                     ((MainActivity) AppMainActivity).BindOrder();
                 } else if (extras.equals("authentication")) {
                     ActiveUser = gosn.fromJson(result, sys_user.class);
+                    new ApiGetRequest().execute(ServiceURL + getAPICFG, "cfg");
                     refreshProducts();
                     refreshAccounts();
                     ((LoginActivity) AppMainActivity).startMainIntent();
@@ -376,6 +389,8 @@ public final class general {
                     TypeToken<List<app_notification>> token = new TypeToken<List<app_notification>>() {
                     };
                     notificationsList = (ArrayList<app_notification>) gosn.fromJson(result, token.getType());
+                }else if (extras.equals("cfg")) {
+                    CFG = gosn.fromJson(result, appcfg.class);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

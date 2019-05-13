@@ -31,18 +31,19 @@
     <string name="product_hit">Select product</string>
     <string name="notes">Notes</string>
     <string name="barcode">Barcode</string>
-    <string name="scnBarcode">Scan</string>
+    <string name="barcode_notfound">Barcode does not found</string>
+    <string name="scnBarcode">Barcode</string>
     <string name="total">Total</string>
     <string name="discount">Discount</string>
     <string name="paid">Paid</string>
     <string name="unpaid">Unpaid</string>
-    <string name="title_activity_order_save">Order Save</string>
+    <string name="title_activity_order_save">Save Order</string>
     <string name="alert_new_order">You will cancel the current order and create a new one, are you sure?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="store">Store code</string>
     <string name="view_product_menu">View products menus</string>
-    <string name="AutoEditSalesItem">Auto edit sales items</string>
+    <string name="AutoEditSalesItem">Auto edit product quntity after adding to order</string>
     <string name="photo_albums">Photo albums</string>
     <string name="service_url">Service URL</string>
     <string name="error_url">Please check service URL</string>
@@ -70,7 +71,8 @@
     <string name="payment_transaction">Payment transaction </string>
 
     <string name="title_activity_splash">POSLite startup</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="language">Language</string>
+    <string name="English">English</string>
+    <string name="Arabic">عربي</string>
 
 </resources>

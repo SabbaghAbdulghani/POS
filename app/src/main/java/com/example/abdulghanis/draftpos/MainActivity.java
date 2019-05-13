@@ -32,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -59,6 +60,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.graphics.Rect;
+
+import zxing.IntentIntegrator;
+import zxing.IntentResult;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -159,6 +163,19 @@ public class MainActivity extends AppCompatActivity {
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 this.finish();
+            }
+        }else {
+
+            IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+            if (scanningResult != null) {
+                String scanContent = scanningResult.getContents();
+                String scanFormat = scanningResult.getFormatName();
+                Toast.makeText(getApplicationContext(),
+                        "FORMAT: " + scanFormat + "CONTENT: " + scanContent, Toast.LENGTH_LONG).show();
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "No scan data received!", Toast.LENGTH_SHORT);
+                toast.show();
             }
         }
     }
@@ -323,6 +340,20 @@ public class MainActivity extends AppCompatActivity {
             BindOrder();
         }
 
+        Button btnScan1=findViewById(R.id.btSan1);
+        btnScan1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startScan();
+            }
+        });
+        Button btnScan2=findViewById(R.id.btSan2);
+        btnScan2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startScan();
+            }
+        });
     }
 
     private void InitProductsMenu(String parentId) {
@@ -336,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
                 //add item to order
                  product selectedProduct =(product) view.getTag();
                 if (selectedProduct != null) {
-                    addOrderProduct(selectedProduct);
+                    addOrderProduct(selectedProduct,1);
                 }
             }
         });
@@ -352,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
                 //add item to order
                 product selectedProduct =(product)view.getTag();
                 if (selectedProduct != null) {
-                    addOrderProduct(selectedProduct);
+                    addOrderProduct(selectedProduct,1);
                 }
             }
         });
@@ -385,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
                 String _name = arrProducts[position];
                 product pro = general.getProductByName(_name);
                 if (pro != null) {
-                    addOrderProduct(pro);
+                    addOrderProduct(pro,1);
                     actProduct.setText("");
                 }
             }
@@ -393,7 +424,47 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void getProductByBarcode(String barcode){
+        double qn = 1;
+        if (general.CFG.UseBarcodeQn && barcode.indexOf(general.CFG.BarcodeQnStartWith) == 0
+                && barcode.length() > general.CFG.BarcodeLen)
+        {
+            barcode = barcode.substring(0, general.CFG.BarcodeLen);
+            qn = getBarcodeQuntity(barcode.substring(general.CFG.BarcodeLen));
+        }
+        product _product= general.getProductByBarcode(barcode);
+        if (_product!=null)
+        {
+            addOrderProduct(_product,qn);
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), barcode + " " +
+                    getString(R.string.barcode_notfound ), Toast.LENGTH_LONG).show();
+        }
+    }
+    private double getBarcodeQuntity(String QnStr)
+    {
+        if (QnStr.length() > general.CFG.QnLen)
+            QnStr = QnStr.substring(0, general.CFG.QnLen);
+        if (QnStr.length() > general.CFG.QnDigit)
+        {
+            if (general.CFG.QnDigit > 0)
+                QnStr = QnStr.substring(0, general.CFG.QnDigit) + "." + QnStr.substring(general.CFG.QnDigit);
+            else
 
+                QnStr = "0." + QnStr;
+        }
+
+        double qn = 1;
+        try{
+            qn=Double.valueOf(QnStr);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        return qn;
+    }
     // list view adapter
     class listOrderAdapter extends BaseAdapter {
         ArrayList<orderItem> _items;
@@ -613,13 +684,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     //adding to order
-    private void addOrderProduct(product _product) {
+    private void addOrderProduct(product _product, double quntity) {
         orderItem item = new orderItem();
         item.CurrencyEqual = 1;
         item.product_id = _product.product_id;
         item.product_name = _product.product_name;
         item.price = _product.price1;
-        item.Quntity = 1;
+        item.Quntity = quntity;
         item.Quntity_piece = 1;
         item.Unit = _product.quntity_name;
         item.PartUnit = _product.part_name;
@@ -716,6 +787,12 @@ public class MainActivity extends AppCompatActivity {
         //BindOrder();
     }
 
+    private void startScan(){
+        IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+        scanIntegrator.initiateScan();
+    }
+
+
     // out of busnse
     private String loadFile(String fileName) {
         try {
@@ -765,6 +842,8 @@ public class MainActivity extends AppCompatActivity {
 
         return byteArray;
     }
+
+
 
 
 }
