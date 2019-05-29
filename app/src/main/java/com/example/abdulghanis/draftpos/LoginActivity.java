@@ -70,12 +70,12 @@ public class LoginActivity extends AppCompatActivity  {//implements LoaderCallba
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        preferences = getSharedPreferences("POS_PREF", 0);
+        loadLanguage();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
         context=this;
-        preferences = getSharedPreferences("POS_PREF", 0);
-        loadLanguage();
 
         mUserName = findViewById(R.id.UseName);
         mPasswordView = findViewById(R.id.password);
