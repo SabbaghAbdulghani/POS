@@ -1,5 +1,7 @@
 package com.example.abdulghanis.draftpos;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabWidget;
 import android.widget.TextView;
@@ -20,19 +23,35 @@ import android.widget.Toast;
 public class OrderSaveActivity extends AppCompatActivity {
 
     private MainActivity mainAc;
-
-
+    Button btCall;
+    String[] arrAccounts;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        arrAccounts = general.getAccountsArray();
         setContentView(R.layout.activity_order_save);
+        btCall=findViewById(R.id.btCall);
         Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //this.getPackageManager()
+                 //this.getPackageManager()
         mainAc = (MainActivity) general.AppMainActivity;
         this.BindOrder();
 
+        btCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+// make call
+                AutoCompleteTextView actCustomer = findViewById(R.id.txCustomer);
+                String _name = actCustomer.getText().toString();
+                account_info acc = general.getAccountByName(_name);
+                if(acc!=null) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:" + acc.contact2));
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     @Override
@@ -64,7 +83,7 @@ public class OrderSaveActivity extends AppCompatActivity {
 
 
     private void BindOrder() {
-        final String[] arrAccounts = general.getAccountsArray();
+        arrAccounts = general.getAccountsArray();
         AutoCompleteTextView actCustomer = findViewById(R.id.txCustomer);
         //ArrayAdapter<String> adpAcc = new ArrayAdapter<String>(mainAc, android.R.layout.select_dialog_item, arrAccounts);
         ArrayAdapter<String> adpAcc = new ArrayAdapter<>(this, android.R.layout.select_dialog_item, arrAccounts);
@@ -74,8 +93,11 @@ public class OrderSaveActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String _name = arrAccounts[position];
                 account_info acc = general.getAccountByName(_name);
+                btCall.setVisibility(view.GONE);
                 if (acc != null) {
                     general.ActiveOrder.account_id = acc.account_id;
+                    if(acc.contact2 !=null && !acc.contact2.equals(""))
+                        btCall.setVisibility(view.VISIBLE);
                 }
             }
         });
@@ -92,7 +114,25 @@ public class OrderSaveActivity extends AppCompatActivity {
         txPaid.setText(String.valueOf(general.ActiveOrder.Payment));
         txUnPaid.setText(String.valueOf(general.ActiveOrder.getTotalItems() - general.ActiveOrder.statment_discount_net - general.ActiveOrder.Payment));
         txNotes.setText(general.ActiveOrder.remarks);
-
+        actCustomer.setText("");
+        btCall.setVisibility(findViewById(R.id.content).GONE);
+        if( general.ActiveOrder.account_id !=null && !general.ActiveOrder.account_id.equals("")) {
+            //int ind = -1;
+            account_info selectedAcc = general.getAccountById(general.ActiveOrder.account_id);
+            if (selectedAcc != null) {
+                for (int i = 0; i < arrAccounts.length; i++) {
+                    if (arrAccounts[i].equals((selectedAcc.getlongName()))) {
+                        //ind = i;
+                        actCustomer.setText(selectedAcc.getlongName());
+                        if(selectedAcc.contact2!=null && !selectedAcc.contact2.equals(""))
+                            btCall.setVisibility(findViewById(R.id.content).VISIBLE);
+                        break;
+                    }
+                }
+            }
+            //if (ind >= 0)
+              //  actCustomer.setSelection(ind);
+        }
         txDiscount.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {

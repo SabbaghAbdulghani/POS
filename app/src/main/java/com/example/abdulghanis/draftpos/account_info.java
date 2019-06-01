@@ -8,6 +8,7 @@ public class account_info {
     public String account_name ;
     public String account_parent ;
     public String parent_name;
+    public String contact2;
     public String getlongName() {
         return account_code + "-" + account_name;
     }

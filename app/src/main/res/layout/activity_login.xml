@@ -27,8 +27,7 @@
                 android:layout_width="266dp"
                 android:layout_height="126dp"
                 android:background="@drawable/splash"
-                android:layout_margin="10sp"
-                />
+                android:layout_margin="10sp" />
 
             <ProgressBar
                 android:id="@+id/progbarRun"

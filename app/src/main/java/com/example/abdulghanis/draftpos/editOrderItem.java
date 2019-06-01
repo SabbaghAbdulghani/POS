@@ -1,6 +1,8 @@
 package com.example.abdulghanis.draftpos;
 
 import android.app.DialogFragment;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -28,6 +30,7 @@ public class editOrderItem extends DialogFragment implements View.OnClickListene
     private MainActivity mainAc;
     orderItem _ordedritem = null;
     EditText etQuntity;
+    Button btCall;
 
     public editOrderItem() {
 
@@ -45,6 +48,7 @@ public class editOrderItem extends DialogFragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.edit_order_item, parent, false);
+        btCall=view.findViewById(R.id.btCall);
 
         TabHost tabhost = (TabHost) view.findViewById(R.id.tabProduct);
         tabhost.setup();
@@ -62,6 +66,21 @@ public class editOrderItem extends DialogFragment implements View.OnClickListene
         btn.setOnClickListener(this);
         btDeleteItem.setOnClickListener(this);
         mainAc = (MainActivity) getActivity();
+
+        btCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+// make call
+                AutoCompleteTextView actSupplier = view.findViewById(R.id.actSupplier);
+                String _name = actSupplier.getText().toString();
+                account_info acc = general.getAccountByName(_name);
+                if(acc!=null) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:" + acc.contact2));
+                    startActivity(intent);
+                }
+            }
+        });
 
         return view;
     }
@@ -135,18 +154,27 @@ public class editOrderItem extends DialogFragment implements View.OnClickListene
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String _name = arrAccounts[position];
                 account_info acc = general.getAccountByName(_name);
+                btCall.setVisibility(view.findViewById(R.id.content).GONE);
                 if (acc != null) {
                     _ordedritem.SupplierId = acc.account_id;
+                    btCall.setVisibility(view.GONE);
+                         if(acc.contact2 !=null && !acc.contact2.equals(""))
+                            btCall.setVisibility(view.VISIBLE);
                 }
             }
         });
 
+        btCall.setVisibility(view.findViewById(R.id.content).GONE);
         if (_ordedritem.SupplierId != null && !_ordedritem.SupplierId.equals("")) {
             account_info acc = general.getAccountById(_ordedritem.SupplierId);
-            if (acc != null)
+            if (acc != null) {
                 actSupplier.setText(acc.getlongName());
-            else
+                if(acc.contact2!=null && !acc.contact2.equals(""))
+                    btCall.setVisibility(view.findViewById(R.id.content).VISIBLE);
+            }else{
                 actSupplier.setText("");
+
+            }
         }
 
 
@@ -209,6 +237,7 @@ public class editOrderItem extends DialogFragment implements View.OnClickListene
                 return false;
             }
         });
+
 
     }
 
